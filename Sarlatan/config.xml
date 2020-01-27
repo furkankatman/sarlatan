@@ -28,6 +28,10 @@
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.2" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
+    <plugin name="cordova-plugin-admobpro" spec="~2.49.0">
+        <variable name="ADMOB_APP_ID" value="ca-app-pub-6629294346381579/5323647476" />
+        <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
+    </plugin>
     <engine name="android" spec="^8.0.0" />
     <engine name="browser" spec="^5.0.4" />
 </widget>

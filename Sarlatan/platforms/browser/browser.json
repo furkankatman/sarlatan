@@ -35,6 +35,14 @@
     },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "io.amazingjobs.sarlatan"
+    },
+    "cordova-plugin-extension": {
+      "PACKAGE_NAME": "io.amazingjobs.sarlatan"
+    },
+    "cordova-plugin-admobpro": {
+      "ADMOB_APP_ID": "ca-app-pub-6629294346381579/5323647476",
+      "PLAY_SERVICES_VERSION": "16.0.0",
+      "PACKAGE_NAME": "io.amazingjobs.sarlatan"
     }
   },
   "dependent_plugins": {},
@@ -255,6 +263,14 @@
       "merges": [
         "window.FileSystem"
       ]
+    },
+    {
+      "file": "plugins/cordova-plugin-admobpro/www/AdMob.js",
+      "id": "cordova-plugin-admobpro.AdMob",
+      "pluginId": "cordova-plugin-admobpro",
+      "clobbers": [
+        "window.AdMob"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -263,6 +279,8 @@
     "cordova-plugin-vibration": "3.1.1",
     "cordova-plugin-screen-orientation": "3.0.2",
     "cordova-plugin-device": "2.0.3",
-    "cordova-plugin-file": "6.0.2"
+    "cordova-plugin-file": "6.0.2",
+    "cordova-plugin-extension": "1.5.4",
+    "cordova-plugin-admobpro": "2.49.0"
   }
 }

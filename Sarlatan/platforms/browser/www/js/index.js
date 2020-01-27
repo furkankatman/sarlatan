@@ -99,7 +99,7 @@ var app = {
 
             }
 
-            $scope.Werbidon = function () {
+            $scope.Gox = function () {
                 $scope.Game.RoundWinner = "0";
                 $scope.Game.Player1.ResultNum = 0;
                 $scope.Game.Player2.ResultNum = 0;
@@ -133,6 +133,66 @@ var app = {
                     $scope.Game.Turn = 1;
                 return score1 + " && " + score2
             }
+
+            $scope.WatchAd = function () {
+                setTimeout(function () {
+                    if (AdMob) {
+
+                        if (/(android)/i.test(navigator.userAgent)) { // for android & amazon-fireos
+                            admobid = {
+                                banner: 'ca-app-pub-6629294346381579/2524140033', // or DFP format "/6253334/dfp_example_ad"
+                                interstitial: 'ca-app-pub-6629294346381579/4955099624'
+                            };
+                        } else if (/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+                            admobid = {
+                                banner: 'ca-app-pub-6629294346381579/4622366632', // or DFP format "/6253334/dfp_example_ad"
+                                interstitial: 'ca-app-pub-6629294346381579/4955099624'
+                            };
+                        } else { // for windows phone
+                            admobid = {
+                                banner: 'ca-app-pub-xxx/zzz', // or DFP format "/6253334/dfp_example_ad"
+                                interstitial: 'ca-app-pub-xxx/kkk'
+                            };
+                        }///
+                        // AdMob.prepareInterstitial({ adId: admobid.interstitial, autoShow: false });
+                        AdMob.createBanner({
+                            adId: admobid.banner,
+                            position: AdMob.AD_POSITION.TOP_CENTER,
+                            autoShow: true,
+                            isTesting: true
+                        }, function (s) {
+                        },
+                            function (e) {
+
+                            });
+
+
+                    }
+                }, 1000);
+                if (Admob) {
+                    alert(Admob)
+                    Admob.setOptions({ isTesting: true },
+                        (s) => { console.log(s), alert("option is set") },
+                        (e) => { console.log(e), alert("option NOTSET") })
+
+                    // it will display smart banner at top center, using the default options
+                    if (AdMob) AdMob.createBanner({
+                        adId: "ca-app-pub-6629294346381579/2524140033",
+                        position: AdMob.AD_POSITION.TOP_CENTER,
+                        isTesting: true,
+                        autoShow: true
+                    });
+
+                    // use reward video
+                    Admob.prepareRewardVideoAd(({ adId: "ca-app-pub-6629294346381579/5323647476", isTesting: true, autoShow: true }), function (s) {
+                        console.log(s), alert(JSON.stringify(s))
+                    }, function (e) {
+                        console.log(e)
+                    });
+                    // Admob.showRewardVideoAd();
+                }
+            }
+
             $scope.$watch(function () {
                 return angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left")
             }, function (nv, ov) {
@@ -155,7 +215,7 @@ var app = {
         })
 
 
-        // window.screen.orientation.lock('landscape');
+        window.screen.orientation.lock('landscape');
         $(document).ready(function () {
             if (navigator.language.indexOf("tr") != -1) {
                 document.body.classList.add("splashTr");
@@ -174,15 +234,9 @@ var app = {
 
                 angular.bootstrap(document.getElementById('body'), ['SarlatanApp']);
                 document.addEventListener('onAdFailLoad', function (e) {
-                    //  alert("ad not loaded ", JSON.stringify(e));
+                    alert("ad not loaded ", JSON.stringify(e));
                 });
-                setTimeout(() => {
-                    //if (/(android)/i.test(navigator.userAgent)) 
-                    //AndroidFullScreen.immersiveMode(() => { }, () => { });
-
-                }, 250);
-
-            }, 3500);
+            }, 1500);
         });
 
 

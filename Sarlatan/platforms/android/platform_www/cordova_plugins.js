@@ -194,6 +194,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
         "cordova"
       ],
       "runs": true
+    },
+    {
+      "id": "cordova-plugin-admobpro.AdMob",
+      "file": "plugins/cordova-plugin-admobpro/www/AdMob.js",
+      "pluginId": "cordova-plugin-admobpro",
+      "clobbers": [
+        "window.AdMob"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -203,6 +211,8 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "es6-promise-plugin": "4.2.2",
     "cordova-plugin-screen-orientation": "3.0.2",
     "cordova-plugin-device": "2.0.3",
-    "cordova-plugin-file": "6.0.2"
+    "cordova-plugin-file": "6.0.2",
+    "cordova-plugin-extension": "1.5.4",
+    "cordova-plugin-admobpro": "2.49.0"
   };
 });

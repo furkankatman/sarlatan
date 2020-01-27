@@ -15,6 +15,10 @@
         <param name="onload" value="true" />
     </feature>
     <allow-navigation href="cdvfile:*" />
+    <feature name="AdMob">
+        <param name="android-package" value="com.rjfun.cordova.admob.AdMobPlugin" />
+        <param name="onload" value="true" />
+    </feature>
     <name>Sarlatan</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.

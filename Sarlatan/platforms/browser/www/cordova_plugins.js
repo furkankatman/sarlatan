@@ -216,6 +216,14 @@ module.exports = [
         "merges": [
             "window.FileSystem"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-admobpro/www/AdMob.js",
+        "id": "cordova-plugin-admobpro.AdMob",
+        "pluginId": "cordova-plugin-admobpro",
+        "clobbers": [
+            "window.AdMob"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -226,7 +234,9 @@ module.exports.metadata =
     "cordova-plugin-vibration": "3.1.1",
     "cordova-plugin-screen-orientation": "3.0.2",
     "cordova-plugin-device": "2.0.3",
-    "cordova-plugin-file": "6.0.2"
+    "cordova-plugin-file": "6.0.2",
+    "cordova-plugin-extension": "1.5.4",
+    "cordova-plugin-admobpro": "2.49.0"
 }
 // BOTTOM OF METADATA
 });

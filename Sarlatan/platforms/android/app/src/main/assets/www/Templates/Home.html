@@ -4,7 +4,7 @@
             <span>Player1</span>
             <div layout="row" layout-align="space-between center">
                 <div>
-                    <img class="CoinIcon" src="img/coins.png" />
+                    <img ng-click="WatchAd()" class="CoinIcon" src="img/coins.png" />
                 </div>
 
                 <div layout="row" layout-align="center center" class="Coin">{{Game.Player1.Coin}}</div>
@@ -42,7 +42,7 @@
                     ng-bind-html="Game.RoundWinner=='1'?Emojis[0]:(Game.RoundWinner=='2'?Emojis[1]:Emojis[2])"></span>
                 <span layout="row" layout-align="center center" class="Score"> {{Game.Player1.Result}}</span>
             </div layout="row" layout-align="start start">
-            <button class="start-btn" ng-click="Werbidon()">
+            <button class="start-btn" ng-click="Gox()">
                 Go
             </button>
             <div layout="row" layout-align="center center">
