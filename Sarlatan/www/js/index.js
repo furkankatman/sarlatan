@@ -41,7 +41,7 @@ var app = {
             $scope.Game.Player1 = { Coin: 100, Result: "" };
             $scope.Game.Player2 = { Coin: 300, Result: "" };
             $scope.Game.Turn = 1;
-            $scope.Game.StartDate = moment().valueOf();
+            $scope.Game.LogStartDate = moment().valueOf();
             $scope.determinateValue = 0;
             $scope.isDragging = false;
             $scope.lastPosX = 0;
@@ -60,7 +60,16 @@ var app = {
             $scope.Sound.Collect = $scope.createSound(cordova.file.applicationDirectory + "www/audio/collect.wav");
 
             $scope.Emojis = ["<span>&#128512;</span>", "<span>&#128557;</span>", "<span>&#128544;</span>"];
-
+            $scope.Collect = function () {
+                $scope.Sound.Collect.play();
+                $scope.Game.RoundWinner = 0;
+                $scope.Game.Player1.Result = 0;
+                $scope.Game.Player2.Result = 0;
+                $scope.Game.Turn = 2;
+                $scope.Game.Collectable = false
+                angular.element(document.getElementById("collect")).removeClass("borderBlink")
+                $scope.GoForPlayer2();
+            }
 
             $scope.onHammer = function (e) {
                 // if (e.isFinal == false)
@@ -100,27 +109,77 @@ var app = {
             }
 
             $scope.Gox = function () {
-                $scope.Game.RoundWinner = "0";
-                $scope.Game.Player1.ResultNum = 0;
-                $scope.Game.Player2.ResultNum = 0;
-                $scope.Game.Player1.Result = $scope.Roll($scope.Game.Turn);
+                if ($scope.Game.Turn == 1 && $scope.Game.Collectable == true) {
+                    angular.element(document.getElementById("collect")).addClass("borderBlink")
+                    return
+                }
+                if ($scope.Game.Turn != 1 && $scope.Game.Collectable == true) {
+                    angular.element(document.getElementById("collect")).addClass("borderBlink")
+                    return
+                }
+                if ($scope.Game.Turn != 1)
+                    return
+                if ($scope.Game.Turn == 1 && $scope.Game.Player2.Result != "" && $scope.Game.Player1.Result != "") {
+                    $scope.Game.RoundWinner = 0;
+                    $scope.Game.Player1.Result = 0;
+                    $scope.Game.Player2.Result = 0;
+                    $scope.Game.Player1.ResultNum = 0;
 
-                $scope.Game.Player2.Result = $scope.Roll($scope.Game.Turn);
-                $scope.Game.Player1.ResultNum = 0;
-                $scope.Game.Player1.Result.split(" && ").forEach(element => {
-                    $scope.Game.Player1.ResultNum = $scope.Game.Player1.ResultNum + parseInt(element)
-                });;
-                $scope.Game.Player2.ResultNum = 0;
-                $scope.Game.Player2.Result.split(" && ").forEach(element => {
-                    $scope.Game.Player2.ResultNum = $scope.Game.Player2.ResultNum + parseInt(element)
-                });;
-                if ($scope.Game.Player2.ResultNum > $scope.Game.Player1.ResultNum) {
-                    $scope.Game.RoundWinner = "2"
+                    $scope.Game.Player1.Result = $scope.Roll($scope.Game.Turn);
+
+
+                    $scope.Game.Player1.ResultNum = 0;
+                    $scope.Game.Player1.Result.split(" && ").forEach(element => {
+                        $scope.Game.Player1.ResultNum = $scope.Game.Player1.ResultNum + parseInt(element)
+                    });
+                    $scope.GoForPlayer2()
                 }
-                if ($scope.Game.Player2.ResultNum < $scope.Game.Player1.ResultNum) {
-                    $scope.Game.RoundWinner = "1"
+                if ($scope.Game.Turn == 1 && $scope.Game.Player2.Result != "") {
+                    $scope.Game.RoundWinner = 0;
+                    $scope.Game.Player1.ResultNum = 0;
+
+                    $scope.Game.Player1.Result = $scope.Roll($scope.Game.Turn);
+
+
+                    $scope.Game.Player1.ResultNum = 0;
+                    $scope.Game.Player1.Result.split(" && ").forEach(element => {
+                        $scope.Game.Player1.ResultNum = $scope.Game.Player1.ResultNum + parseInt(element)
+                    });
+
+                    if ($scope.Game.Player2.ResultNum > $scope.Game.Player1.ResultNum) {
+                        $scope.Game.RoundWinner = 2;
+                        setTimeout(() => {
+                            //give to number2
+                            $scope.Game.RoundWinner = 0;
+                            $scope.Game.Player1.ResultNum = 0;
+                            $scope.Game.Player1.Result = 0
+                            $scope.GoForPlayer2();
+                            $scope.$apply()
+                        }, 2000);
+                    }
+                    if ($scope.Game.Player2.ResultNum < $scope.Game.Player1.ResultNum) {
+                        $scope.Game.RoundWinner = 1;
+                        $scope.Game.Collectable = true;
+                    }
+                    if ($scope.Game.Player2.ResultNum == $scope.Game.Player1.ResultNum) {
+                        $scope.Game.RoundWinner = 0;
+                        $scope.GoForPlayer2()
+                    }
+
                 }
-                if ($scope.Game.Player2.ResultNum == $scope.Game.Player1.ResultNum) { $scope.Game.RoundWinner = "0"; }
+                else if ($scope.Game.Turn == 1 && $scope.Game.Player2.Result == "") {
+                    $scope.Game.RoundWinner = 0;
+                    $scope.Game.Player1.ResultNum = 0;
+
+                    $scope.Game.Player1.Result = $scope.Roll($scope.Game.Turn);
+
+
+                    $scope.Game.Player1.ResultNum = 0;
+                    $scope.Game.Player1.Result.split(" && ").forEach(element => {
+                        $scope.Game.Player1.ResultNum = $scope.Game.Player1.ResultNum + parseInt(element)
+                    });
+                    $scope.GoForPlayer2()
+                }
                 console.log($scope.Game.RoundWinner)
             }
 
@@ -192,7 +251,48 @@ var app = {
                     // Admob.showRewardVideoAd();
                 }
             }
-
+            $scope.GoForPlayer2 = function () {
+                var top = angular.element(document.getElementById("go")).offset().top;
+                var left = angular.element(document.getElementById("go")).offset().left;
+                angular.element(document.getElementById("hand")).css("top", (top + 5) + "px")
+                angular.element(document.getElementById("hand")).css("right", (left + 5) + "px")
+                setTimeout(() => {
+                    $scope.Game.Player2.ResultNum = 0;
+                    $scope.Game.Player2.Result = $scope.Roll($scope.Game.Turn);
+                    $scope.Game.Player2.ResultNum = 0;
+                    $scope.Game.Player2.Result.split(" && ").forEach(element => {
+                        $scope.Game.Player2.ResultNum = $scope.Game.Player2.ResultNum + parseInt(element)
+                    });
+                    if ($scope.Game.Player2.Result != "" && $scope.Game.Player1.Result != "") {
+                        if ($scope.Game.Player2.ResultNum > $scope.Game.Player1.ResultNum) {
+                            $scope.Game.RoundWinner = "2"
+                        }
+                        if ($scope.Game.Player2.ResultNum < $scope.Game.Player1.ResultNum) {
+                            $scope.Game.RoundWinner = "1"
+                        }
+                        if ($scope.Game.Player2.ResultNum == $scope.Game.Player1.ResultNum) { $scope.Game.RoundWinner = "0"; }
+                    }
+                    angular.element(document.getElementById("hand")).css("right", (-50) + "px")
+                    $scope.$apply()
+                }, 3200);
+            }
+            $scope.StartGame = function () {
+                $scope.Game.On = true;
+                var turn = parseInt(Math.random() * 100) % 2;
+                if (turn == 0) {
+                    $scope.Game.Turn = 1;
+                } else {
+                    $scope.Game.Turn = 2;
+                    $scope.GoForPlayer2()
+                }
+            }
+            $scope.$watch("Game.RoundWinner", function (nv, ov) {
+                if (ov != 1 && nv == 1) {
+                    $scope.Game.Collectable = true;
+                } else if (nv == 2) {
+                    $scope.Game.Collectable = false;
+                }
+            })
             $scope.$watch(function () {
                 return angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left")
             }, function (nv, ov) {
