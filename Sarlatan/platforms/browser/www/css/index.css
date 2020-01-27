@@ -1,0 +1,175 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
+.ng-cloak, .x-ng-cloak,
+.ng-hide {
+    display: none !important;
+}
+
+@font-face {
+    font-family: 'PressStart2P-Regular';
+    src: url('PressStart2P-Regular.eot'); /* IE9 Compat Modes */
+    src: url('PressStart2P-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         /* url('PressStart2P-Regular.woff2') format('woff2'), Super Modern Browsers */
+         /* url('PressStart2P-Regular.woff') format('woff'), Pretty Modern Browsers */
+         url('PressStart2P-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+         url('PressStart2P-Regular.svg#svgFontName') format('svg'); /* Legacy iOS */
+  }
+body {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    
+    font-family:"PressStart2P-Regular";
+    font-size:12px;
+    height:100%;
+    margin:0px;
+    padding:0px;
+    text-transform:uppercase;
+    width:100%;
+    background-color: beige;
+}
+md-content{
+    width: 100vw; 
+    height: 100vh; 
+    background-color: aquamarine;
+}
+.Player{
+    width: 50%;
+    height: 30vh;
+    padding: 4px;
+    color: white;
+}
+.Player:nth-child(n+1){
+    background-color: red;
+}
+.Player:nth-child(n+2){
+    background-color: blue;
+}
+
+.ChallengeBox{
+    width: 400px;
+    background: azure;
+    height: 20px;
+}
+.ChallengeIcon{
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    background-color: black;
+    display: block;
+    position: relative;
+    top: -8px;
+}
+md-progress-linear .md-container {
+    height: 20px;
+}
+
+md-progress-linear .md-container .md-bar {
+    height: 20px;
+}
+md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
+    background: linear-gradient(to right,yellow,red) !important;
+}
+
+.video-game-button {
+	text-shadow: 1px 1px pink, -1px -1px maroon;
+    line-height: 1.5em;
+    text-align: center;
+    display: inline-block;
+    width: 80px;
+    -webkit-border-radius: .75em;
+    -moz-border-radius: .75em;
+    -o-border-radius: .75em;
+    border-radius: .75em;
+    background-color: red;
+    -webkit-box-shadow: 0 0.2em maroon;
+    -moz-box-shadow: 0 .2em maroon;
+    -o-box-shadow: 0 .2em maroon;
+    box-shadow: 0 0.2em maroon;
+    color: red;
+    margin: 5px;
+    background-color: red;
+    background-image: -o-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: -moz-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: -webkit-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    cursor: pointer;
+    padding-left: 5px;
+    outline: none;
+    height: 50px;
+    font-size: 18px;
+    color: whitesmoke;
+    outline: none;
+}
+.start-btn{
+    text-align: center;
+	display: inline-block;
+	margin:5px;
+    font-weight: bold;
+    padding: 10px ;
+    background-color: lightgray;
+    text-shadow: -1px -1px black, 1px 1px white;
+    color: gray;
+    -webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-o-border-radius: 7px;
+	border-radius: 7px;
+    box-shadow: 0 .2em gray; 
+    cursor: pointer;
+    font-size: 18px;
+    outline: none;
+}
+.video-game-button:active, .start-btn:active {
+	box-shadow: none;
+	position: relative;
+	top: .2em;
+}
+
+.ResultBox{
+    outline: none;
+}
+.ResultBox div{
+    min-width: 100px;
+}
+.Coin{
+    font-size: 16px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: chartreuse;
+}
+
+.Score{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: hotpink;
+    font-size: 16px;
+}
+.CoinIcon{
+    width: 50px;
+    height: 50px;
+    border: 2px dashed yellow;
+    border-radius: 50%;
+    padding: 6px;
+}

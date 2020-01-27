@@ -1,0 +1,59 @@
+<md-content class="home" layout="column">
+    <div layout="row" layout-align="space-between start">
+        <md-card class="Player" layout="column" layout-align="center stretch">
+            <span>Player1</span>
+            <div layout="row" layout-align="space-between center">
+                <div>
+                    <img class="CoinIcon" src="img/coins.png" />
+                </div>
+
+                <div layout="row" layout-align="center center" class="Coin">{{Game.Player1.Coin}}</div>
+            </div>
+        </md-card>
+        <md-card class="Player" layout="column" layout-align="center stretch">
+            <span>Player2</span>
+            <div layout="row" layout-align="space-between center">
+                <div>
+                    <img class="CoinIcon" src="img/coins.png" />
+                </div>
+
+                <div layout="row" layout-align="center center" class="Coin">{{Game.Player2.Coin}}</div>
+            </div>
+        </md-card>
+    </div>
+    <div layout="column" layout-align="start stretch">
+        <div layout="row" layout-align="center start">
+            <div style="width: 90px;">
+                <button ng-cloak ng-show="Game.RoundWinner=='1' " ng-click="Sound.Collect.play()"
+                    class="video-game-button">Collect</button>
+            </div>
+            <div layout="column" layout-align="start center">
+                <p class="ChallengeBox">
+                    <md-progress-linear md-mode="determinate" value="{{determinateValue}}"></md-progress-linear>
+                    <span hm-pan="onHammer($event)" class="ChallengeIcon"></span>
+                </p>
+                <b style="margin: 10px;">ChallengeCoins:{{ChallengeCoin}}</b>
+            </div>
+        </div>
+        <div layout="row" class="ResultBox" layout-align="center center">
+
+            <div layout="row" layout-align="center center">
+                <span style="font-size: xx-large;"
+                    ng-bind-html="Game.RoundWinner=='1'?Emojis[0]:(Game.RoundWinner=='2'?Emojis[1]:Emojis[2])"></span>
+                <span layout="row" layout-align="center center" class="Score"> {{Game.Player1.Result}}</span>
+            </div layout="row" layout-align="start start">
+            <button class="start-btn" ng-click="Werbidon()">
+                Go
+            </button>
+            <div layout="row" layout-align="center center">
+                <span layout="row" layout-align="center center" class="Score"> {{Game.Player2.Result}}</span
+                    layout="row" layout-align="center center">
+                <!-- <span style="font-size: xx-large;"
+                    ng-bind-html="Game.RoundWinner=='1'?Emojis[1]:(Game.RoundWinner=='2'?Emojis[0]:Emojis[2])"></span> -->
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+</md-content>

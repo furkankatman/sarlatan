@@ -1,0 +1,6 @@
+cordova run android --release -- --keystore="c:/vadebul.keystore" --storePassword=1457fk. --alias=vadebul --password=1457fk.
+
+keytool -genkeypair -v -keystore c:\vadebul.keystore -alias vadebul -keyalg RSA -keysize 2048 -validity 10000
+
+git remote set-url origin https://<USERNAME>:<PASSWORD>@bitbucket.org/path/to/repo.git
+
