@@ -34,12 +34,12 @@
          url('PressStart2P-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
          url('PressStart2P-Regular.svg#svgFontName') format('svg'); /* Legacy iOS */
   }
-body {
+html,body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     
-    font-family:"PressStart2P-Regular";
+    font-family:"PressStart2P-Regular" !important;
     font-size:12px;
     height:100%;
     margin:0px;
@@ -47,6 +47,9 @@ body {
     text-transform:uppercase;
     width:100%;
     background-color: beige;
+}
+button{
+    font-family: "PressStart2P-Regular";
 }
 md-content{
     width: 100vw; 
@@ -92,12 +95,14 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     background: linear-gradient(to right,yellow,red) !important;
 }
 
-.video-game-button,.video-game-buttonStart {
-	text-shadow: 1px 1px pink, -1px -1px maroon;
+.video-game-button {
+    width: 140px;
+    height: 50px;
+    font-size: 18px;
+    text-shadow: 1px 1px pink, -1px -1px maroon;
     line-height: 1.5em;
     text-align: center;
     display: inline-block;
-    width: 80px;
     -webkit-border-radius: .75em;
     -moz-border-radius: .75em;
     -o-border-radius: .75em;
@@ -116,11 +121,9 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     background-image: linear-gradient(left top, pink 3%, red 22%, maroon 99%);
     cursor: pointer;
     padding-left: 5px;
-    outline: none;
-    height: 50px;
-    font-size: 18px;
     color: whitesmoke;
     outline: none;
+    
 }
 .start-btn{
     text-align: center;
@@ -145,11 +148,7 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
 	position: relative;
 	top: .2em;
 }
-.video-game-buttonStart:active{
-    box-shadow: none;
-    position: relative;
-    top: -2.8em;
-}
+
 .ResultBox{
     outline: none;
 }
@@ -212,3 +211,88 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     border:6px dashed;
   }
   @-webkit-keyframes blink { 50% { border-color: yellow; }  }
+
+.video-game-buttonStart {
+    width: 150px;
+    height: 150px;
+    font-size: 28px;
+    position: absolute;
+    top: calc(50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 3px 3px pink, 3px 3px maroon;
+    line-height: 1.5em;
+    text-align: center;
+    display: inline-block;
+    -webkit-border-radius: .75em;
+    -moz-border-radius: .75em;
+    -o-border-radius: .75em;
+    border-radius: .75em;
+    background-color: red;
+    -webkit-box-shadow: 6px 6px maroon;
+    -moz-box-shadow: 6px 6px maroon;
+    -o-box-shadow: 6px 6px maroon;
+    box-shadow: 6px 6px maroon;
+    color: red;
+    margin: 5px;
+    background-color: red;
+    background-image: -o-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: -moz-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: -webkit-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    background-image: linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+    cursor: pointer;
+    padding-left: 5px;
+    color: whitesmoke;
+    outline: none;
+    
+}
+
+.video-game-buttonStart:active{
+    box-shadow: none;
+    position: absolute;
+    top: calc(50% + 6px ) ;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+
+#winner{
+    animation-iteration-count:3;
+    background: #3eff3b;
+    color: white;
+    padding: 10px;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    width: fit-content;
+}
+#loser{
+    animation-iteration-count: 3;
+    background: #6a1919;
+    color: #ffbc00;
+    padding: 10px;
+    left: 100px;
+    font-size: 22px;
+    width: fit-content;
+}
+
+#restart{
+    background: #3eff3b;
+    color: white;
+    padding: 10px;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    width: fit-content;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+}
+#restart:active{
+    top: unset;
+    bottom: 6px;
+}
