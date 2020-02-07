@@ -1,7 +1,9 @@
 <md-content class="home" layout="column">
     <div layout="row" layout-align="space-between start">
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <span>Player1</span>
+            <div layout="row" layout-align="start start"><span>Player1</span>
+                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==1"></i>
+            </div>
             <div layout="row" layout-align="space-between center">
                 <div>
                     <img ng-click="WatchAd()" class="CoinIcon" src="img/coins.png" />
@@ -11,7 +13,9 @@
             </div>
         </md-card>
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <span>Player2</span>
+            <div><span>Player2</span>
+                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==2"></i>
+            </div>
             <div layout="row" layout-align="space-between center">
                 <div>
                     <img class="CoinIcon" src="img/coins.png" />
