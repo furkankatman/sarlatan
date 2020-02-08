@@ -54,7 +54,7 @@ button{
 md-content{
     width: 100vw; 
     height: 100vh; 
-    background-color: aquamarine;
+    background-color: #009688;
     overflow: hidden;
 }
 .Player{
@@ -157,17 +157,18 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
 }
 .Coin{
     font-size: 16px;
-    width: 80px;
+    min-width: 80px;
     height: 80px;
     border-radius: 50%;
     background-color: chartreuse;
+    width: auto;
 }
 
 .Score{
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background-color: hotpink;
+    background-color: #ffc107;
     font-size: 16px;
 }
 .CoinIcon{
@@ -213,8 +214,8 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
   @-webkit-keyframes blink { 50% { border-color: yellow; }  }
 
 .video-game-buttonStart {
-    width: 150px;
-    height: 150px;
+    width: 180px;
+    height: 180px;
     font-size: 28px;
     position: absolute;
     top: calc(50%);
@@ -295,4 +296,39 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
 #restart:active{
     top: unset;
     bottom: 6px;
+}
+
+.fa-flag-checkered{
+    font-size: 20px !important;
+    border-radius: 50%;
+    border: 4px dashed;
+    padding: 4px;
+    border-color: #15ff1c;
+    margin: 0px 4px 0px 0px;
+}
+
+#collect{
+    width:150px
+}
+.Player>div:first-child{
+    min-height: 36px;
+}
+
+.timer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border: 1px solid;
+    padding: 2px 6px 2px 6px;
+    animation-iteration-count:2;
+}
+
+.level{
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    border: 1px solid;
+    padding: 2px 6px 2px 6px;
+    animation-iteration-count:3;
+    font-size: 16px;
 }

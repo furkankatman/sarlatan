@@ -37,7 +37,7 @@ var app = {
             $scope.fib = {};
             $scope.fib.auth = firebase.auth();
             $scope.fib.db = firebase.database();
-            $scope.Game = { On: false };
+            $scope.Game = { On: false, TimeSpent: 0, Level: 1 };
             var coin1 = parseInt(Math.random() * 1000 + 1)
             var coin2 = parseInt(Math.random() * 1000 + 1)
             $scope.Game.Player1 = { Coin: coin1, Result: "" };
@@ -60,14 +60,22 @@ var app = {
                 return sound;
             }
             $scope.Sound.Collect = $scope.createSound(cordova.file.applicationDirectory + "www/audio/collect.wav");
-
+            $scope.Sound.GameSound = $scope.createSound(cordova.file.applicationDirectory + "www/audio/Inescapable.mp3");
+            $scope.Sound.GameSound.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.play();
+                $scope.$apply()
+            }, false);
+            $scope.Sound.WinGame = $scope.createSound(cordova.file.applicationDirectory + "www/audio/win.wav")
+            $scope.Sound.LoseGame = $scope.createSound(cordova.file.applicationDirectory + "www/audio/gameover.mp3")
             $scope.Emojis = ["<span>&#128512;</span>", "<span>&#128557;</span>", "<span>&#128544;</span>"];
 
             $scope.onHammer = function (e) {
                 // if (e.isFinal == false)
                 //     return
 
-
+                if ($scope.Game.Player1.Result != "" || $scope.Game.Player2.Result != "" || $scope.Game.Turn == 2)
+                    return;
                 var elem = angular.element(e.target);
 
                 if (!$scope.isDragging) {
@@ -101,15 +109,28 @@ var app = {
             }
             $scope.Restart = function () {
                 setTimeout(() => {
-                    var coin1 = parseInt(Math.random() * 1000 + 1)
+                    var coin1 = parseInt(Math.random() * 1000 + 1);
+                    var coin2 = parseInt(Math.random() * 1000 + 1);
                     $scope.determinateValue = 0;
                     $scope.ChallengeCoin = 0;
                     angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left", "0px")
                     if ($scope.Game.Player1.Win) {
-                        coin1 = $scope.Game.Player1.Coin
+                        coin1 = $scope.Game.Player1.Coin;
+                        $scope.Game.Level += 1;
+                        angular.element(document.getElementsByClassName("level")[0]).addClass("animated flash")
+                        setTimeout(() => {
+                            angular.element(document.getElementsByClassName("level")[0]).removeClass("animated flash")
+                            $scope.$apply();
+                        }, 300);
+                        if (moment().valueOf() % 5 == 0)
+                            coin2 = parseInt(Math.random() * 10 * coin1 + 1);
+                        else
+                            coin2 = parseInt(Math.random() * 4 * coin1 + 1);
+                        $scope.Game = { On: false, TimeSpent: $scope.Game.TimeSpent, Level: $scope.Game.Level };
                     }
-                    $scope.Game = { On: false };
-                    var coin2 = parseInt(Math.random() * 1000 + 1)
+                    else
+                        $scope.Game = { On: false, TimeSpent: $scope.Game.TimeSpent, Level: 1 };
+
                     $scope.Game.Player1 = { Coin: coin1, Result: "" };
                     $scope.Game.Player2 = { Coin: coin2, Result: "" };
 
@@ -203,8 +224,8 @@ var app = {
                     }
                     else if ($scope.Game.Player1.ResultNum == $scope.Game.Player2.ResultNum) {
                         setTimeout(() => {
-                            $scope.Game.Player1.Result = 0;
-                            $scope.Game.Player2.Result = 0;
+                            $scope.Game.Player1.Result = "";
+                            $scope.Game.Player2.Result = "";
                             $scope.Game.Player1.ResultNum = 0;
                             $scope.Game.Player2.ResultNum = 0;
                             $scope.Game.Turn = 2;
@@ -241,6 +262,10 @@ var app = {
                     if ($scope.Game.Player2.Coin - $scope.ChallengeCoin <= 0) {
                         // alert("YOU WIN")
                         $scope.Game.Player1.Win = true;
+                        $scope.Game.Player2.Coin = $scope.Game.Player2.Coin - $scope.ChallengeCoin;
+                        $scope.Game.Player1.Coin = $scope.Game.Player1.Coin + $scope.ChallengeCoin
+                        navigator.vibrate([100, 200, 300, 400])
+                        $scope.Sound.WinGame.play()
                         angular.element(document.getElementById("winner")).addClass("flash animated");
                         $scope.$apply()
                     }
@@ -255,6 +280,11 @@ var app = {
                         setTimeout(() => {
                             // alert("YOU Loose")
                             $scope.Game.Player1.Lose = true;
+                            $scope.Game.Player1.Coin = $scope.Game.Player1.Coin - $scope.ChallengeCoin;
+                            $scope.Game.Player2.Coin = $scope.Game.Player2.Coin + $scope.ChallengeCoin;
+                            navigator.vibrate([100, 200, 300, 400, 500])
+                            $scope.Sound.LoseGame.play()
+                            $scope.Sound.GameSound.pause()
                             angular.element(document.getElementById("loser")).addClass("rotateInDownRight animated");
                             $scope.$apply()
                         }, 500);
@@ -356,8 +386,58 @@ var app = {
 
 
             }
-            $scope.StartGame = function () {
+            $scope.StartSound = function () {
                 setTimeout(() => {
+                    $scope.Sound.GameSound.volume = 0.1;
+                    setTimeout(() => {
+                        $scope.Sound.GameSound.volume = 0.2;
+                        setTimeout(() => {
+                            $scope.Sound.GameSound.volume = 0.3;
+                            setTimeout(() => {
+                                $scope.Sound.GameSound.volume = 0.4;
+                                setTimeout(() => {
+                                    $scope.Sound.GameSound.volume = 0.5;
+                                    setTimeout(() => {
+                                        $scope.Sound.GameSound.volume = 0.6;
+                                        setTimeout(() => {
+                                            $scope.Sound.GameSound.volume = 0.7;
+                                            setTimeout(() => {
+                                                $scope.Sound.GameSound.volume = 0.8;
+                                                setTimeout(() => {
+                                                    $scope.Sound.GameSound.volume = 0.9;
+                                                    setTimeout(() => {
+                                                        $scope.Sound.GameSound.volume = 1;
+                                                    }, 250);
+                                                }, 250);
+                                            }, 250);
+                                        }, 250);
+                                    }, 250);
+                                }, 250);
+                            }, 250);
+                        }, 250);
+                    }, 250);
+                }, 250);
+            }
+            $scope.StartGame = function () {
+                if ($scope.intervalId == null) {
+                    $scope.intervalId = setInterval(() => {
+                        $scope.Game.TimeSpent = $scope.Game.TimeSpent + 100;
+                        if ($scope.Game.TimeSpent % 10000 == 0) {
+                            var bonus = parseInt($scope.Game.TimeSpent / 10000);
+                            $scope.Game.Player1.Coin = $scope.Game.Player1.Coin + bonus * 100;
+                            angular.element(document.getElementsByClassName("timer")[0]).addClass("animated flash")
+                            setTimeout(() => {
+                                angular.element(document.getElementsByClassName("timer")[0]).removeClass("animated flash")
+                                $scope.$apply();
+                            }, 300);
+                        }
+                        $scope.$apply();
+                    }, 100);
+                }
+                $scope.StartSound()
+                setTimeout(() => {
+                    $scope.Sound.GameSound.volume = 0.1;
+                    $scope.Sound.GameSound.play()
                     $scope.Game.On = true;
                     var turn = parseInt(Math.random() * 100) % 2;
                     if (turn == 0) {
@@ -465,7 +545,11 @@ var app = {
             $stateProvider.state(homeState)
             $urlRouterProvider.otherwise("/home");
         })
-
+        app.filter('ToIntSeconds', function () {
+            return function (val) {
+                return parseInt(val / 1000)
+            }
+        })
 
         window.screen.orientation.lock('landscape');
         $(document).ready(function () {

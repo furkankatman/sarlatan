@@ -1,7 +1,7 @@
 <md-content class="home" layout="column">
     <div layout="row" layout-align="space-between start">
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div layout="row" layout-align="start start"><span>Player1</span>
+            <div layout="row" layout-align="start center"><span>Player1</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==1"></i>
             </div>
             <div layout="row" layout-align="space-between center">
@@ -13,9 +13,9 @@
             </div>
         </md-card>
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div><span>Player2</span>
+            <div layout="row" layout-align="start center"><span>Player2</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==2"></i>
-            </div>
+            </div layout="row" layout-align="start center">
             <div layout="row" layout-align="space-between center">
                 <div>
                     <img class="CoinIcon" src="img/coins.png" />
@@ -36,7 +36,7 @@
                     <md-progress-linear md-mode="determinate" value="{{determinateValue}}"></md-progress-linear>
                     <span hm-pan="onHammer($event)" class="ChallengeIcon"></span>
                 </p>
-                <b style="margin: 10px;">ChallengeCoins:{{ChallengeCoin}}</b>
+                <b style="margin: 10px;">Coins:{{ChallengeCoin}}</b>
             </div>
             <div style="width: 170px;">
                 <button ng-cloak ng-show="false" ng-click="Collect()" class="video-game-button"
@@ -64,7 +64,7 @@
     <!-- {{Game.Turn}}---{{Game.Collectable}} -->
     </div>
 
-    <div ng-if="!Game.On" class="overlay">
+    <div ng-if="!Game.On || Game.Player1.Win || Game.Player1.Lose " class="overlay">
 
     </div>
     <img src="img/hand.png" id="hand" class="hand" />
@@ -79,5 +79,7 @@
     <span>!!! Kaybettin Dostum !!!</span>
 </span>
 <button id="restart" ng-show="Game.Player1.Win || Game.Player1.Lose" class="start-btn" ng-click="Restart()">
-    Yeniden Başla
+    {{Game.Player1.Win==true?'Devam Et':(Game.Player1.Lose==true?'Yeniden Başla':'')}}
 </button>
+<span class="timer">{{Game.TimeSpent|ToIntSeconds}}</span>
+<span class="level">Level: {{Game.Level}}</span>
