@@ -27,20 +27,12 @@
     </div>
     <div layout="column" layout-align="start stretch">
         <div layout="row" layout-align="center start">
-            <div style="width: 170px;">
-                <button ng-cloak ng-show="Game.RoundWinner=='1' " ng-click="Collect()" class="video-game-button"
-                    id="collect">Collect</button>
-            </div>
             <div layout="column" layout-align="start center">
                 <p class="ChallengeBox">
                     <md-progress-linear md-mode="determinate" value="{{determinateValue}}"></md-progress-linear>
                     <span hm-pan="onHammer($event)" class="ChallengeIcon"></span>
                 </p>
                 <b style="margin: 10px;">Coins:{{ChallengeCoin}}</b>
-            </div>
-            <div style="width: 170px;">
-                <button ng-cloak ng-show="false" ng-click="Collect()" class="video-game-button"
-                    id="collect">Collect</button>
             </div>
         </div>
         <div layout="row" class="ResultBox" layout-align="center center">
@@ -49,7 +41,7 @@
                 <span style="font-size: xx-large;"
                     ng-bind-html="Game.RoundWinner=='1'?Emojis[0]:(Game.RoundWinner=='2'?Emojis[1]:Emojis[2])"></span>
                 <span layout="row" layout-align="center center" class="Score"> {{Game.Player1.Result}}</span>
-            </div layout="row" layout-align="start start">
+            </div>
             <button class="start-btn" id="go" ng-click="Gox()">
                 Go
             </button>
@@ -59,6 +51,10 @@
                 <span style="font-size: xx-large;"
                     ng-bind-html="Game.RoundWinner=='1'?Emojis[1]:(Game.RoundWinner=='2'?Emojis[0]:Emojis[2])"></span>
             </div>
+        </div>
+        <div style="width: 170px;" layout="row" layout-align="center start">
+            <button ng-cloak ng-show="Game.RoundWinner=='1' " ng-click="Collect()" class="video-game-button"
+                id="collect">Collect</button>
         </div>
     </div>
     <!-- {{Game.Turn}}---{{Game.Collectable}} -->
@@ -81,5 +77,5 @@
 <button id="restart" ng-show="Game.Player1.Win || Game.Player1.Lose" class="start-btn" ng-click="Restart()">
     {{Game.Player1.Win==true?'Devam Et':(Game.Player1.Lose==true?'Yeniden Başla':'')}}
 </button>
-<span class="timer">{{Game.TimeSpent|ToIntSeconds}}</span>
+<!-- <span class="timer">{{Game.TimeSpent|ToIntSeconds}}</span> -->
 <span class="level">Level: {{Game.Level}}</span>

@@ -271,15 +271,17 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     transform: translate(-50%, -50%);
     font-size: 22px;
     width: fit-content;
+    line-height: 40px;
 }
 #loser{
     animation-iteration-count: 3;
     background: #6a1919;
     color: #ffbc00;
     padding: 10px;
-    left: 100px;
+    left: 0px;
     font-size: 22px;
     width: fit-content;
+    line-height: 40px;
 }
 
 #restart{

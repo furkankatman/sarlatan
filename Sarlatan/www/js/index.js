@@ -37,6 +37,7 @@ var app = {
             $scope.fib = {};
             $scope.fib.auth = firebase.auth();
             $scope.fib.db = firebase.database();
+            $scope.StartSoundTimeouts = [];
             $scope.Game = { On: false, TimeSpent: 0, Level: 1 };
             var coin1 = parseInt(Math.random() * 1000 + 1)
             var coin2 = parseInt(Math.random() * 1000 + 1)
@@ -126,10 +127,10 @@ var app = {
                             coin2 = parseInt(Math.random() * 10 * coin1 + 1);
                         else
                             coin2 = parseInt(Math.random() * 4 * coin1 + 1);
-                        $scope.Game = { On: false, TimeSpent: $scope.Game.TimeSpent, Level: $scope.Game.Level };
+                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: $scope.Game.Level };
                     }
                     else
-                        $scope.Game = { On: false, TimeSpent: $scope.Game.TimeSpent, Level: 1 };
+                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: 1 };
 
                     $scope.Game.Player1 = { Coin: coin1, Result: "" };
                     $scope.Game.Player2 = { Coin: coin2, Result: "" };
@@ -387,36 +388,47 @@ var app = {
 
             }
             $scope.StartSound = function () {
-                setTimeout(() => {
+                var t1 = setTimeout(() => {
                     $scope.Sound.GameSound.volume = 0.1;
-                    setTimeout(() => {
+                    var t2 = setTimeout(() => {
                         $scope.Sound.GameSound.volume = 0.2;
-                        setTimeout(() => {
+                        var t3 = setTimeout(() => {
                             $scope.Sound.GameSound.volume = 0.3;
-                            setTimeout(() => {
+                            var t4 = setTimeout(() => {
                                 $scope.Sound.GameSound.volume = 0.4;
-                                setTimeout(() => {
+                                var t5 = setTimeout(() => {
                                     $scope.Sound.GameSound.volume = 0.5;
-                                    setTimeout(() => {
+                                    var t6 = setTimeout(() => {
                                         $scope.Sound.GameSound.volume = 0.6;
-                                        setTimeout(() => {
+                                        var t7 = setTimeout(() => {
                                             $scope.Sound.GameSound.volume = 0.7;
-                                            setTimeout(() => {
+                                            var t8 = setTimeout(() => {
                                                 $scope.Sound.GameSound.volume = 0.8;
-                                                setTimeout(() => {
+                                                var t9 = setTimeout(() => {
                                                     $scope.Sound.GameSound.volume = 0.9;
-                                                    setTimeout(() => {
+                                                    var t10 = setTimeout(() => {
                                                         $scope.Sound.GameSound.volume = 1;
-                                                    }, 250);
-                                                }, 250);
-                                            }, 250);
-                                        }, 250);
-                                    }, 250);
-                                }, 250);
-                            }, 250);
-                        }, 250);
-                    }, 250);
-                }, 250);
+                                                    }, 4000);
+                                                    $scope.StartSoundTimeouts.push(t10);
+                                                }, 4000);
+                                                $scope.StartSoundTimeouts.push(t9);
+                                            }, 4000);
+                                            $scope.StartSoundTimeouts.push(t8);
+                                        }, 4000);
+                                        $scope.StartSoundTimeouts.push(t7);
+                                    }, 4000);
+                                    $scope.StartSoundTimeouts.push(t6);
+                                }, 4000);
+                                $scope.StartSoundTimeouts.push(t5);
+                            }, 4000);
+                            $scope.StartSoundTimeouts.push(t4);
+                        }, 4000);
+                        $scope.StartSoundTimeouts.push(t3);
+                    }, 4000);
+                    $scope.StartSoundTimeouts.push(t2);
+                }, 4000);
+                $scope.StartSoundTimeouts.push(t1);
+
             }
             $scope.StartGame = function () {
                 if ($scope.intervalId == null) {
@@ -434,6 +446,9 @@ var app = {
                         $scope.$apply();
                     }, 100);
                 }
+                $scope.StartSoundTimeouts.forEach(element => {
+                    clearTimeout(element)
+                });
                 $scope.StartSound()
                 setTimeout(() => {
                     $scope.Sound.GameSound.volume = 0.1;
@@ -551,7 +566,8 @@ var app = {
             }
         })
 
-        window.screen.orientation.lock('landscape');
+        // window.screen.orientation.lock('landscape');
+        window.screen.orientation.lock('portrait');
         $(document).ready(function () {
             if (navigator.language.indexOf("tr") != -1) {
                 document.body.classList.add("splashTr");
