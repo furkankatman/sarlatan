@@ -202,6 +202,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.AdMob"
       ]
+    },
+    {
+      "id": "cordova-plugin-x-toast.Toast",
+      "file": "plugins/cordova-plugin-x-toast/www/Toast.js",
+      "pluginId": "cordova-plugin-x-toast",
+      "clobbers": [
+        "window.plugins.toast"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -213,6 +221,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-extension": "1.5.4",
-    "cordova-plugin-admobpro": "2.49.0"
+    "cordova-plugin-admobpro": "2.49.0",
+    "cordova-plugin-x-toast": "2.7.2"
   };
 });

@@ -43,6 +43,9 @@
       "ADMOB_APP_ID": "ca-app-pub-6629294346381579/5323647476",
       "PLAY_SERVICES_VERSION": "16.0.0",
       "PACKAGE_NAME": "io.amazingjobs.sarlatan"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "io.cordova.hellocordova"
     }
   },
   "dependent_plugins": {},
@@ -271,6 +274,14 @@
       "clobbers": [
         "window.AdMob"
       ]
+    },
+    {
+      "file": "plugins/cordova-plugin-x-toast/www/Toast.js",
+      "id": "cordova-plugin-x-toast.Toast",
+      "pluginId": "cordova-plugin-x-toast",
+      "clobbers": [
+        "window.plugins.toast"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -281,6 +292,7 @@
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-extension": "1.5.4",
-    "cordova-plugin-admobpro": "2.49.0"
+    "cordova-plugin-admobpro": "2.49.0",
+    "cordova-plugin-x-toast": "2.7.2"
   }
 }

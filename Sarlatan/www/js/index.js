@@ -20,6 +20,9 @@ var app = {
     // Application Constructor
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        document.addEventListener("pause", onPause, false);
+        document.addEventListener("resume", onResume, false);
+        document.addEventListener("menubutton", onMenuKeyDown, false);
     },
 
     // deviceready Event Handler
@@ -31,17 +34,22 @@ var app = {
         var app = angular.module("SarlatanApp", ["ui.router", "hmTouchEvents", "ngSanitize", "ngMaterial", "LocalStorageModule"]);
         // "hmTouchEvents", "ngSanitize", "ngMaterial", "LocalStorageModule", 
 
-        app.controller("MainController", function ($scope, $state, $timeout) {
+        app.controller("MainController", function ($scope, $state, $timeout, $transitions, localStorageService) {
             $scope.Greeting = "Merhaba Sayın Üye :)";
+            $scope.los = localStorageService;
             $scope.state = $state;
+            localStorage.setItem("paused", false)
             $scope.fib = {};
             $scope.fib.auth = firebase.auth();
             $scope.fib.db = firebase.database();
+            $scope.InvitesRef = $scope.fib.db.ref("Invites");
+            $scope.ToastManager = window.plugins.toast;
             $scope.StartSoundTimeouts = [];
             $scope.Game = { On: false, TimeSpent: 0, Level: 1 };
+            $scope.Game.Invites = [];
             var coin1 = parseInt(Math.random() * 1000 + 1)
             var coin2 = parseInt(Math.random() * 1000 + 1)
-            $scope.Game.Player1 = { Coin: coin1, Result: "" };
+            $scope.Game.Player1 = { Coin: "", Result: "" };
             $scope.Game.Player2 = { Coin: coin2, Result: "" };
             $scope.Game.Turn = 1;
             $scope.Game.LogStartDate = moment().valueOf();
@@ -49,6 +57,7 @@ var app = {
             $scope.isDragging = false;
             $scope.lastPosX = 0;
             $scope.Game.RoundWinner = "0";
+            $scope.Game.Settings = { Mute: false }
             $scope.Sound = {};
             $scope.Sound.youwon = { tr: {}, en: {} };
             $scope.Sound.youlost = { tr: {}, en: {} };
@@ -58,6 +67,7 @@ var app = {
                 src1.type = "audio/x-wav";
                 src1.src = file;
                 sound.appendChild(src1);
+                document.body.append(sound)
                 return sound;
             }
             $scope.Sound.Collect = $scope.createSound(cordova.file.applicationDirectory + "www/audio/collect.wav");
@@ -127,10 +137,10 @@ var app = {
                             coin2 = parseInt(Math.random() * 10 * coin1 + 1);
                         else
                             coin2 = parseInt(Math.random() * 4 * coin1 + 1);
-                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: $scope.Game.Level };
+                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: $scope.Game.Level, Settings: angular.copy($scope.Game.Settings) };
                     }
                     else
-                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: 1 };
+                        $scope.Game = { On: true, TimeSpent: $scope.Game.TimeSpent, Level: 1, Settings: angular.copy($scope.Game.Settings) };
 
                     $scope.Game.Player1 = { Coin: coin1, Result: "" };
                     $scope.Game.Player2 = { Coin: coin2, Result: "" };
@@ -265,6 +275,11 @@ var app = {
                         $scope.Game.Player1.Win = true;
                         $scope.Game.Player2.Coin = $scope.Game.Player2.Coin - $scope.ChallengeCoin;
                         $scope.Game.Player1.Coin = $scope.Game.Player1.Coin + $scope.ChallengeCoin
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.Game.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
                         navigator.vibrate([100, 200, 300, 400])
                         $scope.Sound.WinGame.play()
                         angular.element(document.getElementById("winner")).addClass("flash animated");
@@ -273,16 +288,27 @@ var app = {
                     else {
                         $scope.Game.Player2.Coin = $scope.Game.Player2.Coin - $scope.ChallengeCoin;
                         $scope.Game.Player1.Coin = $scope.Game.Player1.Coin + $scope.ChallengeCoin
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.Game.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
                     }
-
-
                 } else {
                     if ($scope.Game.Player1.Coin - $scope.ChallengeCoin <= 0) {
                         setTimeout(() => {
                             // alert("YOU Loose")
                             $scope.Game.Player1.Lose = true;
                             $scope.Game.Player1.Coin = $scope.Game.Player1.Coin - $scope.ChallengeCoin;
+                            if ($scope.Game.Player1.Coin < 0)
+                                $scope.Game.Player1.Coin = 0;
                             $scope.Game.Player2.Coin = $scope.Game.Player2.Coin + $scope.ChallengeCoin;
+                            $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: 0 }).then(function () {
+                                setTimeout(() => {
+                                    $scope.$apply()
+                                }, 100);
+                            })
+
                             navigator.vibrate([100, 200, 300, 400, 500])
                             $scope.Sound.LoseGame.play()
                             $scope.Sound.GameSound.pause()
@@ -293,6 +319,11 @@ var app = {
                     else {
                         $scope.Game.Player1.Coin = $scope.Game.Player1.Coin - $scope.ChallengeCoin;
                         $scope.Game.Player2.Coin = $scope.Game.Player2.Coin + $scope.ChallengeCoin;
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.Game.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
                         setTimeout(() => {
                             $scope.Game.RoundWinner = 0;
                             $scope.GoForPlayer2()
@@ -300,6 +331,7 @@ var app = {
                     }
 
                 }
+
 
             }
             $scope.Roll = function (turn) {
@@ -388,6 +420,8 @@ var app = {
 
             }
             $scope.StartSound = function () {
+                if ($scope.Game.Settings.Mute == true)
+                    return
                 var t1 = setTimeout(() => {
                     $scope.Sound.GameSound.volume = 0.1;
                     var t2 = setTimeout(() => {
@@ -435,6 +469,8 @@ var app = {
                     $scope.intervalId = setInterval(() => {
                         $scope.Game.TimeSpent = $scope.Game.TimeSpent + 100;
                         if ($scope.Game.TimeSpent % 10000 == 0) {
+                            if ($scope.Game.Player1.Lose == true)
+                                return
                             var bonus = parseInt($scope.Game.TimeSpent / 10000);
                             $scope.Game.Player1.Coin = $scope.Game.Player1.Coin + bonus * 100;
                             angular.element(document.getElementsByClassName("timer")[0]).addClass("animated flash")
@@ -449,9 +485,18 @@ var app = {
                 $scope.StartSoundTimeouts.forEach(element => {
                     clearTimeout(element)
                 });
+                if ($scope.Game.Player1.Coin == 0) {
+                    $scope.Game.Player1.Coin = parseInt(Math.random() * 1000 + 1)
+                    $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.Game.Player1.Coin }).then(function () {
+                        setTimeout(() => {
+                            $scope.$apply()
+                        }, 100);
+                    })
+                }
                 $scope.StartSound()
                 setTimeout(() => {
-                    $scope.Sound.GameSound.volume = 0.1;
+                    $scope.Sound.GameSound.volume = 0;
+                    $scope.Sound.GameSound.volume.loop = true
                     $scope.Sound.GameSound.play()
                     $scope.Game.On = true;
                     var turn = parseInt(Math.random() * 100) % 2;
@@ -464,7 +509,9 @@ var app = {
                     $scope.$apply()
                 }, 300);
             }
-
+            $scope.DismissInvite = function (op) {
+                angular.element(document.getElementsByClassName("WarAlertBox")[0]).addClass("animated bounceOutDown")
+            }
             $scope.$watch("Game.RoundWinner", function (nv, ov) {
                 if (ov != 1 && nv == 1) {
                     $scope.Game.Collectable = true;
@@ -547,60 +594,405 @@ var app = {
                     });
                     // Admob.showRewardVideoAd();
                 }
+
+            }
+
+            $scope.fib.auth.onAuthStateChanged(function (user) {
+                if (user) {
+                    // User is signed in.
+                    $scope.los.set("User", user)
+                    $scope.fib.db.ref("Users").child(user.uid).update(
+                        {
+                            Uid: user.uid,
+                            Status: 1,
+                            Uuid: device.uuid,
+                            Serial: device.serial,
+                            Manufacturer: device.manufacturer,
+                            Email: user.email
+                        }
+                    )
+                    $scope.fib.db.ref("Users").child($scope.los.get("User").uid).on("value", function (snapshot) {
+                        if (snapshot.val().Coins != null && snapshot.val().Coins >= 0) {
+                            $scope.Game.Player1.Coin = snapshot.val().Coins;
+                        }
+                        else {
+                            $scope.Game.Player1.Coin = coin1
+                            $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.Game.Player1.Coin }).then(function () {
+                                setTimeout(() => {
+                                    $scope.$apply()
+                                }, 100);
+                            })
+                        }
+                        setTimeout(() => {
+                            $scope.$apply()
+                        }, 100);
+                    })
+                    $scope.SettingsRef = $scope.fib.db.ref("Settings").child($scope.los.get("User").uid);
+                    $scope.SettingsRef.once("value").then(function (snapshot) {
+                        if (snapshot.hasChildren() == false) {
+                            $scope.Game.Settings = { Mute: false, ComputerLevel: 1 }
+                            $scope.SettingsRef.set($scope.Game.Settings)
+                        }
+                        else
+                            $scope.Game.Settings = snapshot.val()
+
+                        setTimeout(() => {
+                            $scope.$apply()
+                        }, 100);
+                    })
+                    $scope.InvitesRef.orderByChild("I_G").endAt($scope.los.get("User").uid).on("value", function (snapshot) {
+                        var tempInvites = []
+                        snapshot.forEach(function (val) {
+                            tempInvites.push(val.val())
+                        })
+
+                        for (var index = 0; index < tempInvites.length; index++) {
+                            const element1 = tempInvites[index];
+                            for (var index2 = 0; index2 < $scope.Game.Invites.length; index2++) {
+                                const element2 = $scope.Game.Invites[index2];
+                                if (element1.InviterUid == element2.InviterUid && element1.InviteDate >= element2.InviteDate)
+                                    element2.InviteDate = element1.InviteDate
+                            }
+                        }
+                        if ($scope.Game.Invites.length > 0) {
+                            for (var index = 0; index < tempInvites.length; index++) {
+                                const element1 = tempInvites[index];
+                                var isExist = $.grep($scope.Game.Invites, function (item, index) {
+                                    return item.InviterUid == element1.InviterUid && item.InviteDate == element1.InviteDate
+                                })
+                                if (isExist.length == 0) {
+                                    $scope.Game.Invites.push(element1);
+                                    $scope.Game.Invited = true;
+                                }
+                            }
+
+                        } else {
+                            $scope.Game.Invites = angular.copy(tempInvites)
+                        }
+
+
+                        angular.element(document.getElementsByClassName("WarAlertBox")[0]).addClass("animated bounceInDown")
+                        setTimeout(() => {
+                            $scope.$apply()
+                        }, 100);
+                    })
+
+                    $scope.state.go("Home")
+                } else {
+                    // No user is signed in.
+                    $scope.state.go("Register")
+                }
+            });
+            $scope.$watch(function () {
+                return localStorage.getItem("paused")
+            }, function (nv, ov) {
+                if (nv == "true") {
+                    for (var elem in $scope.Sound) {
+                        if ($scope.Sound[elem].volume != null)
+                            $scope.Sound[elem].pause()
+                    }
+                } else {
+                    if ($scope.Game.Settings.Mute) {
+                        for (var elem in $scope.Sound) {
+                            if ($scope.Sound[elem].volume != null)
+                                $scope.Sound[elem].play()
+                        }
+                    }
+                }
+            }
+            )
+
+            $scope.$watch("Game.Settings.Mute", function (nv, ov) {
+                if (nv == true && ov == false) {
+                    for (var elem in $scope.Sound) {
+                        $scope.StartSoundTimeouts.forEach(element => {
+                            clearTimeout(element)
+                        });
+                        if ($scope.Sound[elem].volume != null)
+                            $scope.Sound[elem].pause()
+                    }
+                }
+                if (nv == false && ov == true) {
+                    for (var elem in $scope.Sound) {
+                        if ($scope.Sound[elem].volume != null)
+                            $scope.Sound[elem].play()
+                    }
+                }
+            })
+            $transitions.onSuccess({}, function (transition) {
+                console.log(
+                    "Successful Transition from " + transition.from().name +
+                    " to " + transition.to().name
+                );
+                if ($scope.los.get("User") == null) {
+                    $scope.state.go("Register")
+                }
+            });
+        })
+
+        app.controller("SettingsController", function ($scope, $state) {
+
+            $scope.SettingsRef.once("value").then(function (snapshot) {
+                if (snapshot.hasChildren() == false) {
+                    $scope.Game.Settings = { Mute: false, ComputerLevel: 1 }
+                }
+                $scope.Game.Settings = snapshot.val()
+                setTimeout(() => {
+                    $scope.$apply()
+                }, 100);
+            })
+            $scope.Mute = function () {
+                var Settings = angular.copy($scope.Game.Settings);
+                Settings.Mute = !Settings.Mute;
+                $scope.SettingsRef.set(Settings).then(function () {
+                    setTimeout(() => {
+                        $scope.Game.Settings = Settings
+                        $scope.$apply()
+                    }, 100);
+                })
+            }
+            $scope.CL = function (i) {
+                $scope.Game.Settings.CL = i;
+                $scope.SettingsRef.set($scope.Game.Settings).then(function () {
+                    setTimeout(() => {
+                        $scope.$apply()
+                    }, 100);
+                })
+            }
+            $scope.Logout = function () {
+                firebase.auth().signOut().then(function () {
+                    $scope.los.clearAll();
+                    setTimeout(() => {
+                        $scope.state.go("Register")
+                        $scope.$apply()
+                    }, 100);
+                })
             }
         })
-        app.config(function ($stateProvider, $urlRouterProvider) {
+
+        app.controller("OpponentsController", function ($scope) {
+            $scope.Battle = { ShowInvite: false };
+
+            $scope.OpponentsRef = $scope.fib.db.ref("Users").orderByChild("Status").equalTo(1).on("value", function (snapshot) {
+                $scope.Opponents = [];
+                snapshot.forEach((val) => {
+                    $scope.Opponents.push(val.val())
+                })
+                setTimeout(() => {
+                    $scope.$apply()
+                }, 100);
+            })
+            $scope.SendInvite = function (oppo) {
+                $scope.InvitesRef.orderByChild("I_G").equalTo($scope.los.get("User").uid + "_" + oppo.Uid).once("value").then(function (snapshot) {
+                    snapshot.forEach(function (val) {
+                        $scope.InvitesRef.child(val.key).set(null)
+                    })
+                    var key = $scope.InvitesRef.push().key;
+                    var Invite = {
+                        InviterUid: $scope.los.get("User").uid, InviterEmail: $scope.los.get("User").email, InviteDate: moment().valueOf(),
+                        GuestUid: oppo.Uid, GuestEmail: oppo.Email, AcceptDate: null, I_G: $scope.los.get("User").uid + "_" + oppo.Uid
+                    }
+                    $scope.InvitesRef.child(key).set(angular.copy(Invite)).then(function () {
+                        setTimeout(() => {
+                            $scope.ToastManager.show("Battle Invite Sent!", "short", "center")
+                            $scope.$apply()
+                        }, 100);
+                    });
+                })
+
+            }
+        })
+        app.controller("RegisterController", function ($scope, $state) {
+            $scope.state = $state
+            $scope.Greeting = "Selam Kayıt Ekranı";
+            $scope.Register = { Login: true };
+            $scope.user = {};
+            $scope.RegisterView = function () {
+                $scope.Register.Register = true;
+                $scope.Register.Login = false;
+                $scope.Register.ForgotPass = false;
+            }
+            $scope.LoginView = function () {
+                $scope.Register.Register = false;
+                $scope.Register.Login = true;
+                $scope.Register.ForgotPass = false;
+            }
+            $scope.ForgotPasswordView = function () {
+                $scope.Register.Register = false;
+                $scope.Register.Login = false;
+                $scope.Register.ForgotPass = true;
+            }
+            $scope.RegisterUser = function () {
+
+                if ($scope.user.Email == "") {
+                    alert("Email required")
+                    return
+                }
+
+                if ($scope.user.Password == "") {
+                    alert("Password required")
+                    return
+                }
+
+                if ($scope.user.PasswordRepeat == "") {
+                    alert("Password-repeat required")
+                    return
+                }
+
+                if ($scope.user.Password != $scope.user.PasswordRepeat) {
+                    alert("both passwords must be equal")
+                    return
+                }
+                console.log("Kayıt oldunuz.");
+                if ($scope.user.EulaAccepted == false || $scope.user.EulaAccepted == null) {
+                    alert("Sözleşmeyi kabul ediniz.");
+                    return
+                }
+                firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(
+                        $scope.user.Email,
+                        $scope.user.Password
+                    )
+                    .catch(function (error) {
+                        // Handle Errors here.
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        // ...
+                        $scope.UserError = errorMessage;
+                    })
+                    .then(function (user) {
+                        if ($scope.UserError == null) {
+                            console.log("Kullanıcı kaydedildi.--->", firebase.auth().currentUser.email);
+
+                            firebase.auth().currentUser.sendEmailVerification().then(function () {
+                                // Email sent.
+                                alert("you registered. We sent you a confirmation email.")
+                                $scope.los.set("User", firebase.auth().currentUser);
+                                $scope.SettingsRef = $scope.fib.db.ref("Settings").child($scope.los.get("User").uid);
+
+                                $scope.state.go("Home")
+                            }).catch(function (error) {
+                                // An error happened.
+                            });
+                        } else {
+                            alert($scope.UserError)
+                            $scope.UserError = null
+                        }
+                    });
+            };
+            $scope.ResetUser = function () {
+                auth.sendPasswordResetEmail($scope.user.Email).then(function () {
+                    // Email sent.
+                    alert("Reset email sent")
+                }).catch(function (error) {
+                    // An error happened.
+                });
+            }
+            $scope.LoginUser = function () {
+                var error = "";
+                firebase.auth().signInWithEmailAndPassword($scope.user.Email, $scope.user.Password).catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // ...
+                    error = errorMessage;
+                    alert(errorMessage)
+                }).then(function () {
+                    if (error == "") {
+                        $scope.state.go("Home")
+                    }
+                });
+            }
+        })
+
+        app.config(function ($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
+
+            localStorageServiceProvider
+                .setPrefix('sarlatan')
+                .setNotify(true, true);
             var homeState = {
-                name: "home",
-                url: "/home",
-                templateUrl: "Templates/Home.html",
-                controller: "MainController"
+                name: "Home",
+                url: "/Home",
+                templateUrl: "Templates/Home.html"
             };
 
-            $stateProvider.state(homeState)
-            $urlRouterProvider.otherwise("/home");
-        })
-        app.filter('ToIntSeconds', function () {
-            return function (val) {
-                return parseInt(val / 1000)
-            }
-        })
-
-        // window.screen.orientation.lock('landscape');
-        window.screen.orientation.lock('portrait');
-        $(document).ready(function () {
-            if (navigator.language.indexOf("tr") != -1) {
-                document.body.classList.add("splashTr");
-            }
-            else {
-                document.body.classList.add("splashEn");
-            }
-            setTimeout(function () {
-                if (navigator.language.indexOf("tr") != -1) {
-                    document.body.classList.remove("splashTr");
+            var eulaState = {
+                name: "Eula",
+                url: '/Eula',
+                templateUrl: "Templates/Eula.html",
+                controller: function ($scope, $state) {
+                    $scope.state = $state;
                 }
-                else {
-                    document.body.classList.remove("splashEn");
-                }
+            }
+            var settingsState = {
+                name: "Settings",
+                url: '/Settings',
+                templateUrl: "Templates/Settings.html",
+                controller: "SettingsController"
+            }
+            var registerState = {
+                name: "Register",
+                url: "/Register",
+                templateUrl: "Templates/Register.html",
+                controller: "RegisterController"
+            };
+            var opponentsState = {
+                name: "Opponents",
+                url: '/Opponents',
+                templateUrl: "Templates/Opponents.html",
+                controller: "OpponentsController"
+            }
+            $stateProvider.state(homeState);
 
-
-                angular.bootstrap(document.getElementById('body'), ['SarlatanApp']);
-                document.addEventListener('onAdFailLoad', function (e) {
-                    alert("ad not loaded ", JSON.stringify(e));
-                });
-            }, 1500);
+            $stateProvider.state(registerState);
+            $stateProvider.state(eulaState);
+            $stateProvider.state(settingsState);
+            $stateProvider.state(opponentsState);
+            $urlRouterProvider.otherwise("/Home");
         });
 
-        setTimeout(() => {
-            console.clear()
-        }, 2000);
+        app.filter("SubToAt", function () {
+            return function (val) {
+                if (val != null)
+                    return val.toString().substr(0, val.toString().indexOf("@"))
+            }
+        })
 
-        window.addEventListener("orientationchange", function () {
-            console.log(screen.orientation.type); // e.g. portrait
+        window.screen.orientation.lock("landscape")
+        angular.element(document).ready(function () {
+            angular.bootstrap(document, ["SarlatanApp"]);
         });
         //device ready ends
+
+
+        window.addEventListener('beforeunload', () => {
+
+            firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
+                { status: 0 });
+            localStorage.setItem("paused", false);
+        });
     }
 
 };
+function onPause($scope) {
+    // Handle the pause event
+    firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
+        { status: 0 });
+    localStorage.setItem("paused", true);
 
+}
+function onResume() {
+    // console.log("resumed",new Date())
+    // Handle the resume event
+    firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
+        { status: 1 });
+    localStorage.setItem("paused", false);
+}
+function onMenuKeyDown() {
+    // Handle the menubutton event
+    firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
+        { status: 0 });
+    localStorage.setItem("paused", false);
+}
 app.initialize();

@@ -1,0 +1,20 @@
+<md-content>
+    <md-card>
+        <div layout="row" layout-align="space-between start">
+            <span class="OpponentsHeader">Opponents</span>
+            <button class="start-btn f12" ng-click="state.go('Settings')">Back To Settings</button>
+        </div>
+        <div>
+            <div class="OpponentsBox" ng-repeat="op in Opponents">
+                <div layout="column">
+                    <span md-colors="{background:'purple'}">{{op.Email|SubToAt}}</span>
+                    <div class="OpponentInfo" layout="row" layout-align="start center">
+                        <img src="img/coins.png" width="40" height="40" />
+                        <span>{{op.Coins}}</span>
+                        <img src="img/war.png" width="40" height="40" ng-click="SendInvite(op)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-card>
+</md-content>

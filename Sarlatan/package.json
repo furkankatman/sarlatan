@@ -36,7 +36,8 @@
             "cordova-plugin-admobpro": {
                 "ADMOB_APP_ID": "ca-app-pub-6629294346381579/5323647476",
                 "PLAY_SERVICES_VERSION": "16.0.0"
-            }
+            },
+            "cordova-plugin-x-toast": {}
         },
         "platforms": [
             "android",

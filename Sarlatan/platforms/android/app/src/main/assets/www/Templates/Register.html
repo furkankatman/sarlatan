@@ -1,0 +1,53 @@
+<md-content class="Register">
+    <md-card ng-show="Register.Login">
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" ng-model="user.Email" />
+        </md-input-container>
+
+        <md-input-container>
+            <label>Password</label>
+            <input type="password" ng-model="user.Password" />
+        </md-input-container>
+        <md-button class="md-raised md-primary" ng-click="LoginUser()">Login</md-button>
+        <button class="forgotpassBtn" ng-click="ForgotPasswordView()">Forgot Password</button>
+        <button class="registerBtn" md-colors="{background:'green'}" ng-click="RegisterView()">Register</button>
+    </md-card>
+    <md-card ng-show="Register.ForgotPass">
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" ng-model="user.Email" />
+        </md-input-container>
+
+        <md-button class="md-raised md-primary" ng-click="ResetUser()">Reset</md-button>
+        <button class="loginBtn" md-colors="{background:'blue'}" ng-click="LoginView()">Login</button>
+
+        <button class="registerBtn" md-colors="{background:'green'}" ng-click="RegisterView()">Register</button>
+    </md-card>
+    <md-card ng-show="Register.Register">
+        <md-input-container>
+            <label>Email</label>
+            <input type="email" ng-model="user.Email" />
+        </md-input-container>
+
+        <md-input-container>
+            <label>Password</label>
+            <input type="password" ng-model="user.Password" />
+        </md-input-container>
+        <md-input-container>
+            <label>Password Repeat</label>
+            <input type="password" ng-model="user.PasswordRepeat" />
+        </md-input-container>
+        <div layout="row" layout-align="center center">
+            <span style="margin-right: 10px;">
+                I Read <span ng-click="state.go('Eula')"
+                    style="border:1px solid #ddd;background-color: aqua;border-radius: 4px;padding: 4px;">Eula and
+                    ToS</span> and accept them.
+            </span>
+            <md-switch ng-model="user.EulaAccepted">{{user.EulaAccepted?'Yes':'No'}}</md-switch>
+        </div>
+        <md-button class="md-raised md-primary" ng-click="RegisterUser()">Register</md-button>
+        <button class="forgotpassBtn" ng-click="ForgotPasswordView()">Forgot Password</button>
+        <button class="loginBtn" md-colors="{background:'green'}" ng-click="LoginView()">Login</button>
+    </md-card>
+</md-content>
