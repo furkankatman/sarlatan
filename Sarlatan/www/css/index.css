@@ -409,7 +409,7 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     margin: 12px;
 }
 
-.SettingsHeader span:first-child{
+.SettingsHeader>span:first-child{
     font-size: 24px;
     margin: 12px;
 }
@@ -433,4 +433,10 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
 .WarAlertMessage{
     color: wheat;
     line-height: 30px;
+}
+.AccountEmail{
+    font-size: 10px;
+    max-width: 150px;
+    overflow-x: scroll;
+    display: inline-block;
 }

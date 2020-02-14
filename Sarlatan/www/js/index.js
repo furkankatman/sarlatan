@@ -38,7 +38,7 @@ var app = {
             $scope.Greeting = "Merhaba Sayın Üye :)";
             $scope.los = localStorageService;
             $scope.state = $state;
-            localStorage.setItem("paused", false)
+            localStorage.setItem("sarlatan.paused", false)
             $scope.fib = {};
             $scope.fib.auth = firebase.auth();
             $scope.fib.db = firebase.database();
@@ -281,7 +281,8 @@ var app = {
                             }, 100);
                         })
                         navigator.vibrate([100, 200, 300, 400])
-                        $scope.Sound.WinGame.play()
+                        if ($scope.Game.Settings.Mute == false)
+                            $scope.Sound.WinGame.play()
                         angular.element(document.getElementById("winner")).addClass("flash animated");
                         $scope.$apply()
                     }
@@ -310,7 +311,8 @@ var app = {
                             })
 
                             navigator.vibrate([100, 200, 300, 400, 500])
-                            $scope.Sound.LoseGame.play()
+                            if ($scope.Game.Settings.Mute == false)
+                                $scope.Sound.LoseGame.play()
                             $scope.Sound.GameSound.pause()
                             angular.element(document.getElementById("loser")).addClass("rotateInDownRight animated");
                             $scope.$apply()
@@ -683,24 +685,6 @@ var app = {
                     $scope.state.go("Register")
                 }
             });
-            $scope.$watch(function () {
-                return localStorage.getItem("paused")
-            }, function (nv, ov) {
-                if (nv == "true") {
-                    for (var elem in $scope.Sound) {
-                        if ($scope.Sound[elem].volume != null)
-                            $scope.Sound[elem].pause()
-                    }
-                } else {
-                    if ($scope.Game.Settings.Mute) {
-                        for (var elem in $scope.Sound) {
-                            if ($scope.Sound[elem].volume != null)
-                                $scope.Sound[elem].play()
-                        }
-                    }
-                }
-            }
-            )
 
             $scope.$watch("Game.Settings.Mute", function (nv, ov) {
                 if (nv == true && ov == false) {
@@ -714,8 +698,12 @@ var app = {
                 }
                 if (nv == false && ov == true) {
                     for (var elem in $scope.Sound) {
-                        if ($scope.Sound[elem].volume != null)
-                            $scope.Sound[elem].play()
+                        if ($scope.Sound[elem].volume != null) {
+                            $scope.Sound[elem].volume = 1;
+                            if (elem == "GameSound") {
+                                $scope.Sound[elem].play()
+                            }
+                        }
                     }
                 }
             })
@@ -970,7 +958,7 @@ var app = {
 
             firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
                 { status: 0 });
-            localStorage.setItem("paused", false);
+            localStorage.setItem("sarlatan.paused", false);
         });
     }
 
@@ -979,7 +967,7 @@ function onPause($scope) {
     // Handle the pause event
     firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
         { status: 0 });
-    localStorage.setItem("paused", true);
+    localStorage.setItem("sarlatan.paused", true);
 
 }
 function onResume() {
@@ -987,12 +975,12 @@ function onResume() {
     // Handle the resume event
     firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
         { status: 1 });
-    localStorage.setItem("paused", false);
+    localStorage.setItem("sarlatan.paused", false);
 }
 function onMenuKeyDown() {
     // Handle the menubutton event
     firebase.database().ref("Users").child(JSON.parse(localStorage.getItem('sarlatan.User')).uid).update(
         { status: 0 });
-    localStorage.setItem("paused", false);
+    localStorage.setItem("sarlatan.paused", false);
 }
 app.initialize();
