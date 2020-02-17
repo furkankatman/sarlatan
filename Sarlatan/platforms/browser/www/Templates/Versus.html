@@ -1,31 +1,29 @@
-{{hi}}<md-content class="home" layout="column">
+<md-content class="home" layout="column">
     <div layout="row" layout-align="space-between start">
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div layout="row" layout-align="start center">
-                <span>Player1</span>
+            <div layout="row" layout-align="space-between center"><span>Player1</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==1"></i>
-                <span ng-show="Game.Versus=1">{{Game.Player1.Name}}</span>
+                <span class="PlayerNames">{{GameVersus.Player1.Name}}</span>
             </div>
             <div layout="row" layout-align="space-between center">
                 <div>
                     <img ng-click="WatchAd()" class="CoinIcon" src="img/coins.png" />
                 </div>
 
-                <div layout="row" layout-align="center center" class="Coin">{{Game.Player1.Coin}}</div>
+                <div layout="row" layout-align="center center" class="Coin">{{GameVersus.Player1.Coin}}</div>
             </div>
         </md-card>
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div layout="row" layout-align="start center">
-                <span>Player2</span>
+            <div layout="row" layout-align="space-between center"><span>Player2</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==2"></i>
-                <span ng-show="Game.Versus=1">{{Game.Player2.Name}}</span>
+                <span class="PlayerNames">{{GameVersus.Player2.Name}}</span>
             </div layout="row" layout-align="start center">
             <div layout="row" layout-align="space-between center">
                 <div>
                     <img class="CoinIcon" src="img/coins.png" />
                 </div>
 
-                <div layout="row" layout-align="center center" class="Coin">{{Game.Player2.Coin}}</div>
+                <div layout="row" layout-align="center center" class="Coin">{{GameVersus.Player2.Coin}}</div>
             </div>
         </md-card>
     </div>
@@ -67,16 +65,10 @@
     </div>
     <!-- {{Game.Turn}}---{{Game.Collectable}} -->
     </div>
-
-    <div ng-if="!Game.On || Game.Player1.Win || Game.Player1.Lose " class="overlay">
-
-    </div>
     <img src="img/hand.png" id="hand" class="hand" />
 </md-content>
-<button ng-if="!Game.On" ng-click="StartGame()" class="video-game-buttonStart">
-    Start
-</button>
-<span class="center" id="winner" ng-show="Game.Player1.Win">
+
+<span class="center" id="winner" ng-show="GameVersus.Player1.Win">
     <span>Kazandın Adamım !!!</span>
 </span>
 <span class="center" id="loser" ng-show="Game.Player1.Lose">
@@ -86,18 +78,6 @@
     {{Game.Player1.Win==true?'Devam Et':(Game.Player1.Lose==true?'Yeniden Başla':'')}}
 </button>
 <!-- <span class="timer">{{Game.TimeSpent|ToIntSeconds}}</span> -->
-<i class="fa fa-bolt InvitesIcon" ng-style="Game.Invites.length>1?{'color':'yellow'}:''" aria-hidden="true"
-    ng-click="state.go('Invites')"></i>
+
 <i class="fa fa-envelope ChatsIcon" aria-hidden="true" ng-click="state.go('Chats')"></i>
 <i class="fa fa-cog settings" aria-hidden="true" ng-click="state.go('Settings')"></i>
-<span class="level">Level: {{Game.Level}}</span>
-<div layout="column" layout-align="start center" class="WarAlertBox"
-    ng-show="Game.Invited &&  Settings.Invites.length==1">
-    <img src="img/war.png" width="150" height="150" class="WarAlert" />
-    <span class="WarAlertMessage">{{Settings.Invites[0].InviterEmail|SubToAt}} wants a Battle!!!</span>
-    <div>
-        <button ng-click="ToInvite(Settings.Invites[0])" md-colors="{background:'green'}"
-            class="start-btn f12">Accept</button>
-        <button md-colors="{background:'red'}" class="start-btn f12" ng-click="DismissInvite()">Dismiss</button>
-    </div>
-</div>

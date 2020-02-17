@@ -1,0 +1,19 @@
+<md-content>
+    <md-card>
+        <h1>Invites</h1>
+
+        <div>
+            <div class="Invites" layout="column" ng-repeat="invite in Invites">
+                <div layout="row" layout-align="space-between start">
+                    <span>{{invite.InviterEmail}}</span>
+                    <span>{{invite.InviteDate|date:'dd-MM-yyyy HH:mm'}}</span>
+                </div>
+                <div layout="row" layout-align="space-around start">
+                    <button ng-click="AcceptInvite(invite)" class="start-btn f12"
+                        md-colors="{background:'green'}">Accept</button>
+                    <button class="start-btn f12" md-colors="{background:'brown'}">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </md-card>
+</md-content>

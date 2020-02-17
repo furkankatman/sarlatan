@@ -1,8 +1,10 @@
 {{hi}}<md-content class="home" layout="column">
     <div layout="row" layout-align="space-between start">
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div layout="row" layout-align="start center"><span>Player1</span>
+            <div layout="row" layout-align="start center">
+                <span>Player1</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==1"></i>
+                <span ng-show="Game.Versus=1">{{Game.Player1.Name}}</span>
             </div>
             <div layout="row" layout-align="space-between center">
                 <div>
@@ -13,8 +15,10 @@
             </div>
         </md-card>
         <md-card class="Player" layout="column" layout-align="center stretch">
-            <div layout="row" layout-align="start center"><span>Player2</span>
+            <div layout="row" layout-align="start center">
+                <span>Player2</span>
                 <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==2"></i>
+                <span ng-show="Game.Versus=1">{{Game.Player2.Name}}</span>
             </div layout="row" layout-align="start center">
             <div layout="row" layout-align="space-between center">
                 <div>
@@ -82,13 +86,18 @@
     {{Game.Player1.Win==true?'Devam Et':(Game.Player1.Lose==true?'Yeniden Başla':'')}}
 </button>
 <!-- <span class="timer">{{Game.TimeSpent|ToIntSeconds}}</span> -->
+<i class="fa fa-bolt InvitesIcon" ng-style="Game.Invites.length>1?{'color':'yellow'}:''" aria-hidden="true"
+    ng-click="state.go('Invites')"></i>
+<i class="fa fa-envelope ChatsIcon" aria-hidden="true" ng-click="state.go('Chats')"></i>
 <i class="fa fa-cog settings" aria-hidden="true" ng-click="state.go('Settings')"></i>
 <span class="level">Level: {{Game.Level}}</span>
-<div layout="column" layout-align="start center" class="WarAlertBox" ng-show="Game.Invited &&  Game.Invites.length==1">
+<div layout="column" layout-align="start center" class="WarAlertBox"
+    ng-show="Game.Invited &&  Settings.Invites.length==1">
     <img src="img/war.png" width="150" height="150" class="WarAlert" />
-    <span class="WarAlertMessage">{{Game.Invites[0].GuestEmail|SubToAt}} wants a Battle!!!</span>
+    <span class="WarAlertMessage">{{Settings.Invites[0].InviterEmail|SubToAt}} wants a Battle!!!</span>
     <div>
-        <button md-colors="{background:'green'}" class="start-btn f12">Accept</button>
+        <button ng-click="ToInvite(Settings.Invites[0])" md-colors="{background:'green'}"
+            class="start-btn f12">Accept</button>
         <button md-colors="{background:'red'}" class="start-btn f12" ng-click="DismissInvite()">Dismiss</button>
     </div>
 </div>

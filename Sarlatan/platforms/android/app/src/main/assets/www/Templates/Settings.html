@@ -1,7 +1,7 @@
-<md-content class="Settings">
+<md-content class="Settings.Sound">
     <md-card layout="column" layout-padding>
-        <div layout="row" layout-align="space-between start" class="SettingsHeader">
-            <span>Settings</span>
+        <div layout="row" layout-align="space-between start" class="Settings.SoundHeader">
+            <span>Settings.Sound</span>
             <div>
                 <span class="AccountEmail">{{los.get('User').email}}</span>
                 <button class="start-btn f12 LogoutBtn" ng-click="Logout()">Logout</button>
@@ -11,7 +11,7 @@
             <div layout="column">
                 <span>Sound:</span>
                 <button ng-click="Mute()" class="start-btn f12"
-                    md-colors="Game.Settings.Mute?{background:'green'}:{background:'red'}">Mute</button>
+                    md-colors="Settings.Sound.Mute?{background:'green'}:{background:'red'}">Mute</button>
             </div>
             <div layout="column">
                 <span>Opponent:</span>
@@ -28,11 +28,11 @@
         <div layout="column" layout-margin>
             <span>Computer Level:</span>
             <div class="ComputerLevels" layout="row" style="padding: 2px;">
-                <button ng-click="CL(0)" md-colors="Game.Settings.CL==0?{background:'green'}:{background:''}"
+                <button ng-click="CL(0)" md-colors="Settings.Sound.CL==0?{background:'green'}:{background:''}"
                     class="start-btn f12">Beginner</button>
-                <button ng-click="CL(1)" md-colors="Game.Settings.CL==1?{background:'green'}:{background:''}"
+                <button ng-click="CL(1)" md-colors="Settings.Sound.CL==1?{background:'green'}:{background:''}"
                     class="start-btn f12">Intermediate</button ng-click="CL(1)">
-                <button ng-click="CL(2)" md-colors="Game.Settings.CL==2?{background:'green'}:{background:''}"
+                <button ng-click="CL(2)" md-colors="Settings.Sound.CL==2?{background:'green'}:{background:''}"
                     class="start-btn f12">Professional</button ng-click="CL(2)">
             </div>
         </div>
