@@ -2,7 +2,7 @@
     <div layout="row" layout-align="space-between start">
         <md-card class="Player" layout="column" layout-align="center stretch">
             <div layout="row" layout-align="space-between center"><span>Player1</span>
-                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==1"></i>
+                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="GameVersus.Turn==1"></i>
                 <span class="PlayerNames">{{GameVersus.Player1.Name}}</span>
             </div>
             <div layout="row" layout-align="space-between center">
@@ -15,7 +15,7 @@
         </md-card>
         <md-card class="Player" layout="column" layout-align="center stretch">
             <div layout="row" layout-align="space-between center"><span>Player2</span>
-                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="Game.Turn==2"></i>
+                <i class="fa fa-flag-checkered" aria-hidden="true" ng-show="GameVersus.Turn==2"></i>
                 <span class="PlayerNames">{{GameVersus.Player2.Name}}</span>
             </div layout="row" layout-align="start center">
             <div layout="row" layout-align="space-between center">
@@ -50,13 +50,13 @@
             <div layout="row" layout-align="center center">
                 <span style="font-size: xx-large;"
                     ng-bind-html="Game.RoundWinner=='1'?Emojis[0]:(Game.RoundWinner=='2'?Emojis[1]:Emojis[2])"></span>
-                <span layout="row" layout-align="center center" class="Score"> {{Game.Player1.Result}}</span>
+                <span layout="row" layout-align="center center" class="Score"> {{GameVersus.Player1.Result}}</span>
             </div>
-            <button class="start-btn" id="go" ng-click="Gox()">
+            <button class="start-btn" id="go" ng-click="GoxVersus()">
                 Go
             </button>
             <div layout="row" layout-align="center center">
-                <span layout="row" layout-align="center center" class="Score"> {{Game.Player2.Result}}</span
+                <span layout="row" layout-align="center center" class="Score"> {{GameVersus.Player2.Result}}</span
                     layout="row" layout-align="center center">
                 <span style="font-size: xx-large;"
                     ng-bind-html="Game.RoundWinner=='1'?Emojis[1]:(Game.RoundWinner=='2'?Emojis[0]:Emojis[2])"></span>

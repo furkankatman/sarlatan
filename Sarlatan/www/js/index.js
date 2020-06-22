@@ -122,7 +122,6 @@ var app = {
                 // elem.style.top = posY + "px";
                 if (e.isFinal) {
                     $scope.isDragging = false;
-
                 }
 
             }
@@ -347,11 +346,20 @@ var app = {
             $scope.Roll = function (turn) {
                 var score1 = Math.floor(Math.random() * 6) + 1;
                 var score2 = Math.floor(Math.random() * 6) + 1;
-                if ($scope.Game.Turn == 1 && $scope.Game.Player2.Result == "")
-                    $scope.Game.Turn = 2;
-                else if ($scope.Game.Turn == 2 && $scope.Game.Player1.Result == "")
-                    $scope.Game.Turn = 1;
-                return score1 + " && " + score2
+                if ($scope.GameVersus == null) {
+                    if ($scope.Game.Turn == 1 && $scope.Game.Player2.Result == "")
+                        $scope.Game.Turn = 2;
+                    else if ($scope.Game.Turn == 2 && $scope.Game.Player1.Result == "")
+                        $scope.Game.Turn = 1;
+                    return score1 + " && " + score2
+                }
+                else {
+                    if ($scope.GameVersus.Turn == 1 && $scope.GameVersus.Player2.Result == "")
+                        $scope.GameVersus.Turn = 2;
+                    else if ($scope.GameVersus.Turn == 2 && $scope.GameVersus.Player1.Result == "")
+                        $scope.GameVersus.Turn = 1;
+                    return score1 + " && " + score2
+                }
             }
             $scope.MoveHandGo = function () {
                 var top = angular.element(document.getElementById("go")).offset().top;
@@ -535,10 +543,8 @@ var app = {
             $scope.$watch(function () {
                 return angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left")
             }, function (nv, ov) {
-                console.log("ChallengeIcon Css Left", nv);
                 var percentage = nv != "" ? Math.ceil(100 * parseInt(nv) / 380) : 0
                 $scope.determinateValue = percentage
-                console.log($scope.determinateValue, "Percentage");
                 if ($scope.GameVersus == null) {
                     if ($scope.Game.Turn == 1) {
                         $scope.ChallengeCoin = Math.ceil(percentage * $scope.Game.Player1.Coin / 100)
@@ -547,6 +553,18 @@ var app = {
                     else {
                         $scope.ChallengeCoin = Math.ceil(percentage * $scope.Game.Player2.Coin / 100)
                         console.log($scope.ChallengeCoin)
+                    }
+                }
+                else {
+                    if ($scope.GameVersus.Turn == 1 && $scope.los.get("User").uid == $scope.GameVersus.Player1.Uid) {
+                        $scope.ChallengeCoin = Math.round(percentage * $scope.GameVersus.Player1.Coin / 100)
+                        console.log($scope.ChallengeCoin)
+                        $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin })
+                    }
+                    else if ($scope.GameVersus.Turn == 2 && $scope.los.get("User").uid == $scope.GameVersus.Player2.Uid) {
+                        $scope.ChallengeCoin = Math.round(percentage * $scope.GameVersus.Player2.Coin / 100)
+                        console.log($scope.ChallengeCoin)
+                        $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin })
                     }
                 }
 
@@ -639,9 +657,9 @@ var app = {
                                 }, 100);
                             })
                         }
-                        setTimeout(() => {
-                            $scope.$apply()
-                        }, 100);
+                        // setTimeout(() => {
+                        //     $scope.$apply()
+                        // }, 100);
                     })
                     $scope.Settings.SoundRef = $scope.fib.db.ref("Settings").child($scope.los.get("User").uid);
                     $scope.Settings.SoundRef.once("value").then(function (snapshot) {
@@ -682,11 +700,12 @@ var app = {
                             if ($scope.GameVersus.Loser == "") {
                                 $scope.GameVersusKey = val.key;
 
-                                setTimeout(() => {
-                                    $scope.$apply();
-                                    $scope.state.go("Versus")
 
-                                }, 100);
+                                $scope.ChallengeCoin = val.val().ChallengeCoin;
+                                // setTimeout(() => {
+                                //     $scope.$apply()
+                                // }, 100);
+                                $scope.state.go("Versus")
                             }
                         })
                     })
@@ -696,8 +715,11 @@ var app = {
                             if ($scope.GameVersus.Loser == "") {
                                 $scope.GameVersusKey = val.key;
 
-                                if ($scope.GameVersus.Turn == 2 && $scope.GameVersus.ChallengeCoin != null)
-                                    $scope.ChallengeCoin = val.val().ChallengeCoin;
+                                // if ($scope.GameVersus.Turn == 2 && $scope.GameVersus.ChallengeCoin != null)
+                                $scope.ChallengeCoin = val.val().ChallengeCoin;
+                                setTimeout(() => {
+                                    $scope.$apply()
+                                }, 100);
                                 $scope.state.go("Versus")
                             }
                         })
@@ -955,10 +977,12 @@ var app = {
             })
             $scope.AcceptInvite = function (invite) {
                 $scope.Game.Versus = 1;
+
                 $scope.Game.Player1.Name = $filter('SubToAt')(invite.InviterEmail);
                 $scope.Game.Player1.Uid = invite.InviterUid;
                 $scope.Game.Player2.Name = $filter('SubToAt')($scope.los.get("User").email);
                 $scope.Game.Player2.Uid = $scope.los.get("User").uid;
+                $scope.Game.Turn = 1;
                 $scope.Game.Winner = "";
                 $scope.Game.Loser = "";
                 $scope.Game.StartDate = moment().valueOf();
@@ -967,7 +991,14 @@ var app = {
 
                     var key = $scope.fib.db.ref("Games").push().key;
                     $scope.GamesRef.child(key).set($scope.Game).then(function () {
-                        $scope.$apply();
+                        $scope.fib.db.ref("Users").child(invite.GuestUid).child("Coins").once("value").then((snapshot) => {
+                            $scope.Game.Player2.Coin = snapshot.val();
+
+
+                            $scope.GamesRef.child(key).set($scope.Game).then(function () {
+                                $scope.$apply();
+                            })
+                        })
                     })
                 })
             }
@@ -980,19 +1011,256 @@ var app = {
         app.controller("VersusController", function ($scope) {
             console.log("ccsx")
 
-            $scope.$watch("GameVersus.ChallengeCoin", function (nv, ov) {
-                $scope.ChallengeCoin = nv;
+            $scope.$watch("GameVersus", function (nv, ov) {
+                //turn change
+                if (nv == null || ov == null)
+                    return
+                if (ov != null && ov.Turn != nv.Turn) {
+                    $scope.GamesRef.child($scope.GameVersusKey).update(nv);
+                }
+                if (nv.ChallengeCoin == null || nv.ChallengeCoin == ov.ChallengeCoin)
+                    return
+
+                $scope.GameVersus.ChallengeCoin = nv.ChallengeCoin;
                 console.log("cc", $scope.ChallengeCoin)
                 var percentage = 0;
                 if ($scope.GameVersus.Turn == 1) {
-                    percentage = parseInt(100 * $scope.ChallengeCoin / $scope.GameVersus.Player1.Coin)
+                    percentage = parseInt(100 * $scope.GameVersus.ChallengeCoin / $scope.GameVersus.Player1.Coin)
                 }
                 else {
-                    percentage = parseInt(100 * $scope.ChallengeCoin / $scope.GameVersus.Player2.Coin)
+                    percentage = parseInt(100 * $scope.GameVersus.ChallengeCoin / $scope.GameVersus.Player2.Coin)
                 }
                 var challengeCoinWidth = parseInt(380 * percentage / 100);
-                angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left", challengeCoinWidth + "px")
-            })
+                angular.element(document.getElementsByClassName("ChallengeIcon")[0]).css("left", challengeCoinWidth + "px");
+                if ($scope.GameVersus.Turn == 2 && $scope.los.get("User").uid == $scope.GameVersus.Player2.Uid) {
+                    $scope.GamesRef.child($scope.GameVersusKey).update(nv);
+                }
+                if ($scope.GameVersus.Turn == 1 && $scope.los.get("User").uid == $scope.GameVersus.Player1.Uid) {
+                    $scope.GamesRef.child($scope.GameVersusKey).update(nv);
+                }
+
+            }, true)
+
+
+            $scope.GoxVersus = function () {
+                if ($scope.GameVersus.Turn == 1 && $scope.GameVersus.Collectable == true) {
+                    angular.element(document.getElementById("collect")).addClass("borderBlink")
+                    return
+                }
+                if ($scope.GameVersus.Turn != 1 && $scope.GameVersus.Collectable == true) {
+                    angular.element(document.getElementById("collect")).addClass("borderBlink")
+                    return
+                }
+                if ($scope.los.get("User").uid == $scope.GameVersus.Player2.Uid && $scope.GameVersus.Turn == 1)
+                    return
+                if ($scope.los.get("User").uid == $scope.GameVersus.Player1.Uid && $scope.GameVersus.Turn == 2)
+                    return
+                if ($scope.GameVersus.Turn == 1) {
+                    if ($scope.GameVersus.Player2.Result == "") {
+                        $scope.GameVersus.RoundWinner = 0;
+                        $scope.GameVersus.Player1.ResultNum = 0;
+
+                        $scope.GameVersus.Player1.Result = $scope.Roll($scope.GameVersus.Turn);
+
+
+                        $scope.GameVersus.Player1.ResultNum = 0;
+                        $scope.GameVersus.Player1.Result.split(" && ").forEach(element => {
+                            $scope.GameVersus.Player1.ResultNum = $scope.GameVersus.Player1.ResultNum + parseInt(element)
+                        });
+                    }
+                    if ($scope.GameVersus.Player2.Result != "") {
+                        $scope.GameVersus.RoundWinner = 0;
+                        $scope.GameVersus.Player1.ResultNum = 0;
+
+                        $scope.GameVersus.Player1.Result = $scope.Roll($scope.GameVersus.Turn);
+
+
+                        $scope.GameVersus.Player1.ResultNum = 0;
+                        $scope.GameVersus.Player1.Result.split(" && ").forEach(element => {
+                            $scope.GameVersus.Player1.ResultNum = $scope.GameVersus.Player1.ResultNum + parseInt(element)
+                        });
+                        if ($scope.GameVersus.Player1.ResultNum > $scope.GameVersus.Player2.ResultNum) {
+                            $scope.GameVersus.RoundWinner = 1;
+                            setTimeout(() => {
+                                $scope.HandoutVersus()
+                                $scope.$apply()
+                            }, 2000);
+                        }
+                        else if ($scope.GameVersus.Player1.ResultNum < $scope.GameVersus.Player2.ResultNum) {
+                            $scope.GameVersus.RoundWinner = 2;
+                            $scope.GameVersus.Turn = 2;
+                            setTimeout(() => {
+                                $scope.HandoutVersus()
+                                $scope.$apply()
+                            }, 2000);
+                        }
+                        else if ($scope.GameVersus.Player1.ResultNum == $scope.GameVersus.Player2.ResultNum) {
+                            setTimeout(() => {
+                                $scope.GameVersus.Player1.Result = "";
+                                $scope.GameVersus.Player2.Result = "";
+                                $scope.GameVersus.Player1.ResultNum = 0;
+                                $scope.GameVersus.Player2.ResultNum = 0;
+                                $scope.GameVersus.Turn = 2;
+                                // $scope.GoForPlayer2()
+                                $scope.$apply()
+                            }, 1200);
+                        }
+                    }
+                    return;
+                }
+
+                if ($scope.GameVersus.Turn == 2) {
+                    if ($scope.GameVersus.Player1.Result == "") {
+                        $scope.GameVersus.RoundWinner = 0;
+                        $scope.GameVersus.Player1.ResultNum = 0;
+
+                        $scope.GameVersus.Player2.Result = $scope.Roll($scope.GameVersus.Turn);
+
+
+                        $scope.GameVersus.Player2.ResultNum = 0;
+                        $scope.GameVersus.Player2.Result.split(" && ").forEach(element => {
+                            $scope.GameVersus.Player2.ResultNum = $scope.GameVersus.Player2.ResultNum + parseInt(element)
+                        });
+                    }
+                    if ($scope.GameVersus.Player1.Result != "") {
+                        $scope.GameVersus.RoundWinner = 0;
+                        $scope.GameVersus.Player2.ResultNum = 0;
+
+                        $scope.GameVersus.Player2.Result = $scope.Roll($scope.GameVersus.Turn);
+
+
+                        $scope.GameVersus.Player2.ResultNum = 0;
+                        $scope.GameVersus.Player2.Result.split(" && ").forEach(element => {
+                            $scope.GameVersus.Player2.ResultNum = $scope.GameVersus.Player2.ResultNum + parseInt(element)
+                        });
+                        if ($scope.GameVersus.Player2.ResultNum > $scope.GameVersus.Player1.ResultNum) {
+                            $scope.GameVersus.RoundWinner = 2;
+                            setTimeout(() => {
+                                $scope.HandoutVersus()
+                                $scope.$apply()
+                            }, 2000);
+                        }
+                        else if ($scope.GameVersus.Player2.ResultNum < $scope.GameVersus.Player1.ResultNum) {
+                            $scope.GameVersus.RoundWinner = 1;
+                            $scope.GameVersus.Turn = 2;
+                            setTimeout(() => {
+                                $scope.HandoutVersus()
+                                $scope.$apply()
+                            }, 2000);
+                        }
+                        else if ($scope.GameVersus.Player2.ResultNum == $scope.GameVersus.Player1.ResultNum) {
+                            setTimeout(() => {
+                                $scope.GameVersus.Player2.Result = "";
+                                $scope.GameVersus.Player1.Result = "";
+                                $scope.GameVersus.Player2.ResultNum = 0;
+                                $scope.GameVersus.Player1.ResultNum = 0;
+                                $scope.GameVersus.Turn = 2;
+                                // $scope.GoForPlayer2()
+                                $scope.$apply()
+                            }, 1200);
+                        }
+                    }
+                }
+                console.log($scope.GameVersus.RoundWinner)
+            }
+            $scope.Collect = function () {
+                $scope.Sound.Collect.play();
+
+                $scope.GameVersus.Player1.Result = "";
+                $scope.GameVersus.Player2.Result = "";
+
+                setTimeout(() => {
+                    $scope.Handout();
+                    $scope.Game.Turn = 1;
+                    $scope.Game.Collectable = false;
+                    $scope.Game.RoundWinner = 0
+                    angular.element(document.getElementById("collect")).removeClass("borderBlink")
+                    // $scope.GoForPlayer2();
+                    $scope.$apply()
+                }, 600);
+            }
+            $scope.HandoutVersus = function () {
+                $scope.GameVersus.Player1.Result = ""
+                $scope.GameVersus.Player2.Result = ""
+                $scope.GameVersus.Player1.ResultNum = 0
+                $scope.GameVersus.Player2.ResultNum = 0
+                if ($scope.GameVersus.RoundWinner == 1) {
+                    if ($scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin <= 0) {
+                        // alert("YOU WIN")
+                        $scope.GameVersus.Player1.Win = true;
+                        $scope.GameVersus.Player2.Coin = $scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin;
+                        $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin + $scope.GameVersus.ChallengeCoin
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.GameVersus.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
+                        navigator.vibrate([100, 200, 300, 400])
+                        if ($scope.Settings.Sound.Mute == false)
+                            $scope.Sound.WinGame.play()
+                        angular.element(document.getElementById("winner")).addClass("flash animated");
+                        $scope.$apply()
+                    }
+                    else {
+                        $scope.GameVersus.Player2.Coin = $scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin;
+                        $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin + $scope.GameVersus.ChallengeCoin
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.GameVersus.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
+                    }
+                    $scope.GamesRef.child($scope.GameVersusKey).update($scope.GameVersus);
+                } else {
+                    if ($scope.GameVersus.Player1.Coin - $scope.GameVersus.ChallengeCoin <= 0) {
+                        setTimeout(() => {
+                            // alert("YOU Loose")
+                            $scope.GameVersus.Player1.Lose = true;
+                            $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin - $scope.GameVersus.ChallengeCoin;
+                            if ($scope.GameVersus.Player1.Coin < 0)
+                                $scope.GameVersus.Player1.Coin = 0;
+                            $scope.GameVersus.Player2.Coin = $scope.GameVersus.Player2.Coin + $scope.GameVersus.ChallengeCoin;
+                            $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: 0 }).then(function () {
+                                setTimeout(() => {
+                                    $scope.$apply()
+                                }, 100);
+                            })
+
+                            navigator.vibrate([100, 200, 300, 400, 500])
+                            if ($scope.Settings.Sound.Mute == false)
+                                $scope.Sound.LoseGame.play()
+                            $scope.Sound.GameSound.pause()
+                            angular.element(document.getElementById("loser")).addClass("rotateInDownRight animated");
+                            $scope.$apply()
+                        }, 500);
+                    }
+                    else {
+                        $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin - $scope.GameVersus.ChallengeCoin;
+                        $scope.GameVersus.Player2.Coin = $scope.GameVersus.Player2.Coin + $scope.GameVersus.ChallengeCoin;
+                        $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.GameVersus.Player1.Coin }).then(function () {
+                            setTimeout(() => {
+                                $scope.$apply()
+                            }, 100);
+                        })
+                        setTimeout(() => {
+                            $scope.GameVersus.RoundWinner = 0;
+                            // $scope.GoForPlayer2()
+                        }, 700);
+                    }
+                    $scope.GamesRef.child($scope.GameVersusKey).update($scope.GameVersus);
+                }
+
+
+            }
+            $scope.RollVersus = function (turn) {
+                var score1 = Math.floor(Math.random() * 6) + 1;
+                var score2 = Math.floor(Math.random() * 6) + 1;
+                if ($scope.GameVersus.Turn == 1 && $scope.GameVersus.Player2.Result == "")
+                    $scope.GameVersus.Turn = 2;
+                else if ($scope.GameVersus.Turn == 2 && $scope.GameVersus.Player1.Result == "")
+                    $scope.GameVersus.Turn = 1;
+                return score1 + " && " + score2
+            }
 
         })
 
