@@ -564,7 +564,8 @@ var app = {
                     else if ($scope.GameVersus.Turn == 2 && $scope.los.get("User").uid == $scope.GameVersus.Player2.Uid) {
                         $scope.ChallengeCoin = Math.round(percentage * $scope.GameVersus.Player2.Coin / 100)
                         console.log($scope.ChallengeCoin)
-                        $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin })
+                        if (isNaN($scope.ChallengeCoin) == false)
+                            $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin })
                     }
                 }
 
@@ -1101,7 +1102,7 @@ var app = {
                                 $scope.GameVersus.Player1.ResultNum = 0;
                                 $scope.GameVersus.Player2.ResultNum = 0;
                                 $scope.GameVersus.Turn = 2;
-                                // $scope.GoForPlayer2()
+                                // $scope.GoForPlayer2()0
                                 $scope.$apply()
                             }, 1200);
                         }
@@ -1188,6 +1189,8 @@ var app = {
                     if ($scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin <= 0) {
                         // alert("YOU WIN")
                         $scope.GameVersus.Player1.Win = true;
+                        $scope.GameVersus.Player2.Lose = true;
+
                         $scope.GameVersus.Player2.Coin = $scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin;
                         $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin + $scope.GameVersus.ChallengeCoin
                         $scope.fib.db.ref("Users").child($scope.los.get("User").uid).update({ Coins: $scope.GameVersus.Player1.Coin }).then(function () {
@@ -1216,6 +1219,7 @@ var app = {
                         setTimeout(() => {
                             // alert("YOU Loose")
                             $scope.GameVersus.Player1.Lose = true;
+                            $scope.GameVersus.Player2.Win = true;
                             $scope.GameVersus.Player1.Coin = $scope.GameVersus.Player1.Coin - $scope.GameVersus.ChallengeCoin;
                             if ($scope.GameVersus.Player1.Coin < 0)
                                 $scope.GameVersus.Player1.Coin = 0;

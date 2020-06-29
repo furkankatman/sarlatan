@@ -68,10 +68,12 @@
     <img src="img/hand.png" id="hand" class="hand" />
 </md-content>
 
-<span class="center" id="winner" ng-show="GameVersus.Player1.Win">
+<span class="center" id="winner"
+    ng-show="(GameVersus.Player1.Win && los.get('User').uid==GameVersus.Player1.Uid) || (GameVersus.Player2.Win && los.get('User').uid==GameVersus.Player2.Uid)">
     <span>Kazandın Adamım !!!</span>
 </span>
-<span class="center" id="loser" ng-show="Game.Player1.Lose">
+<span class="center" id="loser"
+    ng-show="(GameVersus.Player1.Lose && los.get('User').uid==GameVersus.Player1.Uid) || (GameVersus.Player2.Lose && los.get('User').uid==GameVersus.Player2.Uid)">
     <span>!!! Kaybettin Dostum !!!</span>
 </span>
 <button id="restart" ng-show="Game.Player1.Win || Game.Player1.Lose" class="start-btn" ng-click="Restart()">
