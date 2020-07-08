@@ -167,6 +167,8 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
     border-radius: 50%;
     background-color: chartreuse;
     width: auto;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 .Score{

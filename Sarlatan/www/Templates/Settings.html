@@ -1,42 +1,42 @@
 <md-content class="Settings.Sound">
     <md-card layout="column" layout-padding>
         <div layout="row" layout-align="space-between start" class="Settings.SoundHeader">
-            <span>Settings.Sound</span>
+            <span>Ayarlar.Ses</span>
             <div>
                 <span class="AccountEmail">{{los.get('User').email}}</span>
-                <button class="start-btn f12 LogoutBtn" ng-click="Logout()">Logout</button>
+                <button class="start-btn f12 LogoutBtn" ng-click="Logout()">Çıkış</button>
             </div>
         </div>
         <div layout="row" layout-align="space-between center">
             <div layout="column">
-                <span>Sound:</span>
+                <span>Ses:</span>
                 <button ng-click="Mute()" class="start-btn f12"
-                    md-colors="Settings.Sound.Mute?{background:'green'}:{background:'red'}">Mute</button>
+                    md-colors="Settings.Sound.Mute?{background:'green'}:{background:'red'}">Sesi Kapat</button>
             </div>
             <div layout="column">
-                <span>Opponent:</span>
+                <span>Rakip:</span>
                 <div class="Opponent" layout="row">
                     <button ng-click="state.go('Opponents')" class="start-btn f12">
-                        Pick an Opponent
+                        Rakip Seç
                     </button>
                     <button ng-click="PickRandom()" class="start-btn f12">
-                        Random Opponent
+                        Rastgele Rakip
                     </button>
                 </div>
             </div>
         </div>
         <div layout="column" layout-margin>
-            <span>Computer Level:</span>
+            <span>Bilgisayar Seviyesi:</span>
             <div class="ComputerLevels" layout="row" style="padding: 2px;">
                 <button ng-click="CL(0)" md-colors="Settings.Sound.CL==0?{background:'green'}:{background:''}"
-                    class="start-btn f12">Beginner</button>
+                    class="start-btn f12">Başlangıç</button>
                 <button ng-click="CL(1)" md-colors="Settings.Sound.CL==1?{background:'green'}:{background:''}"
-                    class="start-btn f12">Intermediate</button ng-click="CL(1)">
+                    class="start-btn f12">Orta</button ng-click="CL(1)">
                 <button ng-click="CL(2)" md-colors="Settings.Sound.CL==2?{background:'green'}:{background:''}"
-                    class="start-btn f12">Professional</button ng-click="CL(2)">
+                    class="start-btn f12">Profesyonel</button ng-click="CL(2)">
             </div>
         </div>
-        <button class="start-btn f12" ng-click="state.go('Home')">Back To Game</button>
+        <button class="start-btn f12" ng-click="state.go('Home')">Oyuna Dön</button>
 
     </md-card layout-padding>
 </md-content>
