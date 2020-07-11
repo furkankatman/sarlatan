@@ -578,48 +578,74 @@ var app = {
                     }
                 }
                 else if ($scope.GameVersus.Finished == false || $scope.GameVersus.Finished == null) {
-                    if ($scope.GameVersus.DeterminateValue == null) {
-                        var percentage = nv != "" ? Math.round(100 * parseInt(nv) / 380) : 0
-                        $scope.determinateValue = percentage;
-                    } else {
-                        $scope.determinateValue = $scope.GameVersus.DeterminateValue;
-                        var percentage = $scope.GameVersus.DeterminateValue
-                    }
-                    if ($scope.GameVersus.Turn == 1 && $scope.los.get("User").uid == $scope.GameVersus.Player1.Uid) {
+                    // if ($scope.GameVersus.DeterminateValue == null || $scope.GameVersus.DeterminateValue == 0) {
+                    var percentage = nv != "" ? Math.round(100 * parseInt(nv) / 380) : 0
+                    $scope.determinateValue = percentage;
+                    $scope.GameVersus.DeterminateValue = percentage;
+                    // } else {
+                    //     $scope.determinateValue = $scope.GameVersus.DeterminateValue;
+                    //     var percentage = $scope.GameVersus.DeterminateValue
+                    // }
+                    if ($scope.GameVersus.Turn == 1 && $scope.los.get("User").uid == $scope.GameVersus.Player1.Uid &&
+                        $scope.GameVersus.Player2.Result == "") {
                         $scope.ChallengeCoin = Math.round(percentage * $scope.GameVersus.Player1.Coin / 100)
                         console.log($scope.ChallengeCoin)
                         $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin, DeterminateValue: percentage })
                     }
-                    else if ($scope.GameVersus.Turn == 2 && $scope.los.get("User").uid == $scope.GameVersus.Player2.Uid) {
+                    else if ($scope.GameVersus.Turn == 2 && $scope.los.get("User").uid == $scope.GameVersus.Player2.Uid && $scope.GameVersus.Player1.Result == "") {
                         $scope.ChallengeCoin = Math.round(percentage * $scope.GameVersus.Player2.Coin / 100)
                         console.log($scope.ChallengeCoin)
-                        // if ($scope.timeoutCC != null && $scope.timeoutCC.length > 0) {
-                        //     console.log($scope.timeoutCC);
-                        //     while ($scope.timeoutCC.length > 0) {
-                        //         var timeoutToKill = $scope.timeoutCC.pop();
-                        //         clearTimeout(timeoutToKill)
-                        //     }
-                        // }
-                        // if ($scope.timeoutCC == null)
-                        //     $scope.timeoutCC = []
-                        var timeouts = setTimeout(() => {
-                            if (isNaN($scope.ChallengeCoin) == false)
-                                $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin, DeterminateValue: percentage })
-                        }, 1000);
-                        // $scope.timeoutCC.push(timeouts);
+                        $scope.GamesRef.child($scope.GameVersusKey).update({ ChallengeCoin: $scope.ChallengeCoin, DeterminateValue: percentage })
                     }
                 }
 
 
                 navigator.vibrate(1)
             })
+            setTimeout(function () {
+                if (AdMob) {
+
+                    if (/(android)/i.test(navigator.userAgent)) { // for android & amazon-fireos
+                        admobid = {
+                            banner: 'ca-app-pub-7666719161819805/6505875704', // or DFP format "/6253334/dfp_example_ad"
+                            interstitial: 'ca-app-pub-7666719161819805/1318602981'
+                        };
+                    } else if (/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+                        admobid = {
+                            banner: 'ca-app-pub-6629294346381579/4622366632', // or DFP format "/6253334/dfp_example_ad"
+                            interstitial: 'ca-app-pub-6629294346381579/4955099624'
+                        };
+                    } else { // for windows phone
+                        admobid = {
+                            banner: 'ca-app-pub-xxx/zzz', // or DFP format "/6253334/dfp_example_ad"
+                            interstitial: 'ca-app-pub-xxx/kkk'
+                        };
+                    }///
+                    // AdMob.prepareInterstitial({ adId: admobid.interstitial, autoShow: false, isTesting: true });
+
+
+                    // AdMob.createBanner({
+                    //     adId: admobid.banner,
+                    //     position: AdMob.AD_POSITION.BOTTTOM_CENTER,
+                    //     autoShow: true,
+                    //     isTesting: true
+                    // }, function (s) {
+                    // },
+                    //     function (e) {
+
+                    //     });
+
+
+                }
+            }, 2500);
             $scope.WatchAd = function () {
+                return
                 setTimeout(function () {
                     if (AdMob) {
 
                         if (/(android)/i.test(navigator.userAgent)) { // for android & amazon-fireos
                             admobid = {
-                                banner: 'ca-app-pub-6629294346381579/2524140033', // or DFP format "/6253334/dfp_example_ad"
+                                banner: 'ca-app-pub-7666719161819805/6505875704', // or DFP format "/6253334/dfp_example_ad"
                                 interstitial: 'ca-app-pub-6629294346381579/4955099624'
                             };
                         } else if (/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
@@ -647,13 +673,14 @@ var app = {
 
 
                     }
-                }, 1000);
+                }, 2500);
 
             }
 
             $scope.fib.auth.onAuthStateChanged(function (user) {
                 if (user) {
                     // User is signed in.
+
                     $scope.los.set("User", user)
                     $scope.fib.db.ref("Users").child(user.uid).update(
                         {
@@ -1062,12 +1089,18 @@ var app = {
         })
 
         app.controller("VersusController", function ($scope) {
-            console.log("ccsx")
+
 
             $scope.$watch("GameVersus", function (nv, ov) {
                 // return
                 //turn change
                 console.log(nv, "gameversus")
+                if ($scope.GameVersus.RoundCount % 10 == 0 && $scope.GameVersus.Player1.Result == "" && $scope.GameVersus.Player2.Result == "") {
+                    if (AdMob) {
+                        AdMob.showInterstitial();
+                        AdMob.prepareInterstitial({ adId: "ca-app-pub-7666719161819805/1318602981", autoShow: false, isTesting: true })
+                    }
+                }
                 if (nv != null && nv.Finished == true) {
 
                     if ($scope.GameVersus.Player1.Win == true && $scope.GameVersus.Player1.Uid == $scope.los.get("User").uid)
@@ -1270,7 +1303,7 @@ var app = {
                 }, 600);
             }
             $scope.HandoutVersus = function () {
-
+                $scope.GameVersus.RoundCount == null ? $scope.GameVersus.RoundCount = 1 : $scope.GameVersus.RoundCount += 1;
                 if ($scope.GameVersus.RoundWinner == 1) {
                     $scope.GameVersus.Turn = 1;
                     if ($scope.GameVersus.Player2.Coin - $scope.GameVersus.ChallengeCoin <= 0) {
@@ -1294,10 +1327,7 @@ var app = {
                         navigator.vibrate([100, 200, 300, 400])
                         if ($scope.Settings.Sound.Mute == false)
                             $scope.Sound.WinGame.play()
-                        // if ($scope.GameVersus.Player1.Uid == $scope.los.get("User").uid)
-                        //     angular.element(document.getElementById("winner")).addClass("flash animated");
-                        // else
-                        //     angular.element(document.getElementById("loser")).addClass("rotateInDownRight animated");
+
                         $scope.GameVersus.EndDate = moment().valueOf();
                         $scope.GameVersus.Winner = $scope.GameVersus.Player1.Uid
                         $scope.GameVersus.Loser = $scope.GameVersus.Player2.Uid
@@ -1305,6 +1335,7 @@ var app = {
                         $scope.GameVersus.Player2.Result = ""
                         $scope.GameVersus.Player1.ResultNum = 0
                         $scope.GameVersus.Player2.ResultNum = 0
+
                         $scope.GamesRef.child($scope.GameVersusKey).update($scope.GameVersus).then(function () {
                             setTimeout(() => {
                                 $scope.$apply()
@@ -1367,11 +1398,7 @@ var app = {
                             if ($scope.Settings.Sound.Mute == false)
                                 $scope.Sound.LoseGame.play()
                             $scope.Sound.GameSound.pause()
-                            // alert(JSON.stringify($scope.GameVersus))
-                            // if ($scope.GameVersus.Player1.Uid == $scope.los.get("User").uid)
-                            //     angular.element(document.getElementById("loser")).addClass("rotateInDownRight animated");
-                            // else
-                            //     angular.element(document.getElementById("winner")).addClass("flash animated");
+
                             $scope.GameVersus.EndDate = moment().valueOf();
                             $scope.GameVersus.Player1.Result = ""
                             $scope.GameVersus.Player2.Result = ""
@@ -1409,7 +1436,6 @@ var app = {
                             $scope.GameVersus.Player2.ResultNum = 0
                             $scope.GamesRef.child($scope.GameVersusKey).update($scope.GameVersus).then(function () {
                                 setTimeout(() => {
-
                                     $scope.$apply()
                                 }, 100);
                             });

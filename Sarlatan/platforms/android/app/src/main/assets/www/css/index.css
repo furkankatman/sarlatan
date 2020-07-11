@@ -472,3 +472,14 @@ md-progress-linear.md-default-theme .md-bar, md-progress-linear .md-bar{
 .PlayerNames{
     overflow-x:scroll ;
 }
+
+/* .go1,.go2{
+    width: 110px;
+    height: 160px;
+    position: absolute;
+    left: calc(50% - 150px);
+    top: calc(50% - 150px);
+    background: #03A9F4;
+    padding: 10px;
+    border-radius: 40px;
+} */
